@@ -24,10 +24,10 @@ public class Favorite {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "ProductID", nullable = false)
+	@JoinColumn(name = "Productid", nullable = false)
 	private Product product;
 
 	@ManyToOne
-	@JoinColumn(name = "AccountID", nullable = false)
+	@JoinColumn(name = "Accountid", nullable = false)
 	private Account account;
 }

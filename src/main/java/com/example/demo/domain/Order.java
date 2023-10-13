@@ -32,13 +32,13 @@ public class Order {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "AccountID", nullable = false)
+	@JoinColumn(name = "Accountid", nullable = false)
 	private Account account;
 
-	@Column(name = "StaffID")
+	@Column(name = "Staffid")
 	private Long staffId;
 
-	@Column(name = "OrderDate", nullable = false)
+	@Column(name = "Orderdate", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
 
@@ -51,6 +51,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
     
-    @Column(name = "ReasonDeny", columnDefinition = "TEXT")
+    @Column(name = "Reasondeny", columnDefinition = "TEXT")
     private String reasonDeny;
 }

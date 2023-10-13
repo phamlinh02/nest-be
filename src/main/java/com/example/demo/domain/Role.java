@@ -26,8 +26,8 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "RoleName", nullable = false)
-	private String roleName;
+	@Column(name = "Rolename", nullable = false)
+	private String rolename;
 	
 	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<Authority> authorities = new ArrayList<>();

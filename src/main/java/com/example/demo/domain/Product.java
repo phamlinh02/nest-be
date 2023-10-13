@@ -29,7 +29,7 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "ProductName", nullable = false, length = 250)
+	@Column(name = "Productname", nullable = false, length = 250)
 	private String productName;
 
 	@Column(name = "Price", nullable = false, precision = 10, scale = 2)
@@ -41,7 +41,7 @@ public class Product {
 	@Column(name = "Image", length = 255)
 	private String image;
 	
-	@Column(name = "Active")
+	@Column(name = "Active", length = 50)
 	private String active;
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
@@ -54,6 +54,6 @@ public class Product {
     private List<OrderDetail> orderDetails = new ArrayList<>();
 	
 	@ManyToOne
-	@JoinColumn(name = "CategoryID", nullable = false)
+	@JoinColumn(name = "Categoryid", nullable = false)
 	private Category category;
 }

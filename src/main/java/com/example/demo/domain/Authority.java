@@ -24,10 +24,10 @@ public class Authority {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "AccountID", nullable = false)
+	@JoinColumn(name = "Accountid", nullable = false)
 	private Account account;
 
 	@ManyToOne
-	@JoinColumn(name = "RoleID", nullable = false)
+	@JoinColumn(name = "Roleid", nullable = false)
 	private Role role;
 }

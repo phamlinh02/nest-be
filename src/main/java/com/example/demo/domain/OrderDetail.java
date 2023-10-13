@@ -26,11 +26,11 @@ public class OrderDetail {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "OrderID", nullable = false)
+    @JoinColumn(name = "Orderid", nullable = false)
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "ProductID", nullable = false)
+    @JoinColumn(name = "Productid", nullable = false)
     private Product product;
 
     @Column(name = "Quantity", nullable = false)
