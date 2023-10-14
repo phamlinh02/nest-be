@@ -54,23 +54,17 @@ public class Constant {
         }
     }
 
-    public enum PAYMENT_STATUS {
-        NONE,
-        ACCEPT,
-        REJECT,
-        PENDING,
-        CANCEL
-    }
-
-    public enum PROJECT_TYPE {
-        PC200,
-        PC150
+    public enum BILL_STATUS {
+        PROCESSING,
+        CANCELLED,
+        COMPLETED,
+        PENDING
     }
 
     public enum ROLE_USER{
-        GUEST,
-        ADMIN,
-        CUSTOMER
+        ROLE_DIRECTOR,
+        ROLE_ADMIN,
+        ROLE_CUSTOMER
     }
 
     public enum USER_RANK{

@@ -11,16 +11,16 @@ import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AccountService {
-	private final IAccountRepository accountRepository;
-	
-	public AccountService(IAccountRepository accountRepository) {
-		this.accountRepository = accountRepository;
-	}
-	public Page<AccountDTO> getAllAccount(Pageable pageable) {
+    private final IAccountRepository accountRepository;
+
+    public AccountService(IAccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
+    public Page<AccountDTO> getAllAccount(Pageable pageable) {
         Page<AccountDTO> users = MapperUtils.mapEntityPageIntoDtoPage(this.accountRepository.findAll(pageable), AccountDTO.class);
         return users;
     }
-	
+
 }

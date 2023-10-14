@@ -25,12 +25,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Name", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
     
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> products = new ArrayList<>();
-    
-    @Column(name = "Active")
-    private String active;
+    private Boolean isActive;
 }

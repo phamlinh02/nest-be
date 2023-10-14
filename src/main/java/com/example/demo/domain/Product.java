@@ -25,35 +25,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Product {
 	@Id
-	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "ProductName", nullable = false, length = 250)
+	@Column(nullable = false, length = 250)
 	private String productName;
 
-	@Column(name = "Price", nullable = false, precision = 10, scale = 2)
+	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal price;
 
-	@Column(name = "Description", nullable = false, columnDefinition = "TEXT")
+	@Column(nullable = false)
+	private Long quantity;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 
-	@Column(name = "Image", length = 255)
+	@Column(length = 255)
 	private String image;
 	
-	@Column(name = "Active")
-	private String active;
-	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-	private List<Favorite> favorites = new ArrayList<>();
+	private Boolean isActive;
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-	private List<Rate> rates = new ArrayList<>();
-	
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails = new ArrayList<>();
-	
-	@ManyToOne
-	@JoinColumn(name = "CategoryID", nullable = false)
-	private Category category;
+	private Long categoryId;
 }

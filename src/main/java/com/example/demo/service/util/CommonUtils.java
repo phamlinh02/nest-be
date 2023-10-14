@@ -196,7 +196,7 @@ public class CommonUtils {
         }
         List<T> result = query.getResultList();
 
-        return new PageImpl<>(result, pageable, ((BigInteger) countQuery.getSingleResult()).intValue());
+        return new PageImpl<>(result, pageable, ((Long) countQuery.getSingleResult()).intValue());
     }
 
     @SuppressWarnings("unchecked")
