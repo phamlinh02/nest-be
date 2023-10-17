@@ -19,15 +19,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Favorite {
 	@Id
-	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "ProductID", nullable = false)
-	private Product product;
+	private Long productId;
 
-	@ManyToOne
-	@JoinColumn(name = "AccountID", nullable = false)
-	private Account account;
+	private Long accountId;
 }
