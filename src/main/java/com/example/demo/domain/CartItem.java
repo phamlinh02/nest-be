@@ -4,26 +4,21 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@Table(name = "Cart")
+@Table(name = "cart_item")
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cart {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ToString.Exclude
+    @ManyToOne
     @JoinColumn(name = "product_id")
-    Product productId;
+    private Product productId;
 
-    @ToString.Exclude
     @JoinColumn(name = "account_id")
-    Account accountId;
-
+    private Long accountId;
     private Long quantity;
-
-
 }
