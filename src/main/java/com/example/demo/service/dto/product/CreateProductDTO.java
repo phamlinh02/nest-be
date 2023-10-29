@@ -3,17 +3,14 @@ package com.example.demo.service.dto.product;
 import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ProductDTO {
-	private Long id;
-
+@AllArgsConstructor
+public class CreateProductDTO {
+	
 	private String productName;
 
 	private BigDecimal price;
