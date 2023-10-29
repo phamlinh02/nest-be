@@ -8,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ProductDTO {
+public class ProductDetailDTO {
 	private Long id;
-
+	
 	private String productName;
 
 	private BigDecimal price;

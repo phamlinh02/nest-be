@@ -2,13 +2,13 @@ package com.example.demo.web.rest;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.repository.IAccountRepository;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.account.ChangePassDTO;
@@ -18,10 +18,10 @@ import com.example.demo.service.dto.account.PayloadLogin;
 import com.example.demo.service.dto.account.UpdateAccountDTO;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 
 @RequestMapping("/api/nest/account")
 @RestController 
+@CrossOrigin("*")
 public class AccountResource {
 	private final AccountService accountService;
 	
@@ -42,7 +42,7 @@ public class AccountResource {
     }
 	
 	@PostMapping("/update") 
-    @ApiOperation(value = "Thêm người dùng")
+    @ApiOperation(value = "Cập nhật người dùng")
     public ResponseDTO saveUser(@Validated @RequestBody UpdateAccountDTO account) {
         return ResponseDTO.success(this.accountService.updateAccount(account));
     }
