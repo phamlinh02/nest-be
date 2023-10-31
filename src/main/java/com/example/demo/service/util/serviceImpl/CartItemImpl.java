@@ -1,4 +1,4 @@
-package com.example.demo.service.util.impl;
+package com.example.demo.service.util.serviceImpl;
 
 import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.CartItem;
@@ -24,10 +24,7 @@ public class CartItemImpl implements CartItemService {
         return cartItemReponse.findByIdAccount(accountId);
     }
 
-    @Override
-    public CartItem findByAccountIdAndProductId(Long accountId, Long productId) {
-        return cartItemReponse.findByAccountIdAndProductId(accountId, productId);
-    }
+
 
 //    @Override
 //    public CartItem addToCart(CartItem item) {
@@ -50,15 +47,14 @@ public class CartItemImpl implements CartItemService {
         try {
             Long productId = item.getProductId().getId(); // Lấy productId từ đối tượng Product
             Product product = productService.findById(productId); // Lấy thông tin sản phẩm dựa trên productId
-            Long accountId = item.getAccountId();
             if (product == null) {
                 throw new NotFoundException("Product not found");
             }
 
             item.setProductId(product); // Gán thông tin sản phẩm cho trường productId trong CartItem
-            CartItem existingCartItem = cartItemReponse.findByAccountIdAndProductId(productId, accountId);
+            CartItem existingCartItem = cartItemReponse.findByAccountIdAndProductId(item.getAccountId(),item.getProductId());
             if (existingCartItem != null) {
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + item.getQuantity());
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1L);
                 cartItemReponse.save(existingCartItem);
                 return existingCartItem;
             } else {

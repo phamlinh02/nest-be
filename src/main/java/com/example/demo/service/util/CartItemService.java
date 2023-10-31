@@ -7,8 +7,6 @@ import java.util.List;
 public interface CartItemService {
     public List<CartItem> findByIdAccount(Long accountId);
 
-    public CartItem findByAccountIdAndProductId(Long accountId, Long productId);
-
     public CartItem addToCart(CartItem item);
 
     public List<CartItem> remove(Long accountId);
