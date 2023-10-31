@@ -3,6 +3,7 @@ package com.example.demo.web.rest;
 import com.example.demo.domain.CartItem;
 import com.example.demo.domain.Product;
 import com.example.demo.service.dto.ResponseDTO;
+import com.example.demo.service.dto.cart.CartItemDTO;
 import com.example.demo.service.util.CartItemService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/nest/user/cart")
+@RequestMapping("/api/nest/cart")
 public class CartItemResource {
     @Autowired
     CartItemService cartItemSevice;
@@ -45,11 +46,11 @@ public class CartItemResource {
     }
 
     @DeleteMapping("/remove")
-    public ResponseDTO removeAllItem(@RequestBody Map<String, Long> requestBody){
+    public ResponseDTO removeAllItem(@RequestBody Map<String, Long> requestBody) {
         try {
             Long accountId = requestBody.get("accountId");
-            List<CartItem> cartItem = cartItemSevice.remove(accountId);
-            return ResponseDTO.success(cartItem);
+            cartItemSevice.remove(accountId);
+            return ResponseDTO.success(accountId);
         } catch (Exception e) {
             return ResponseDTO.error();
         }
@@ -65,4 +66,11 @@ public class CartItemResource {
             return ResponseDTO.error();
         }
     }
+
+    @PutMapping("/update")
+    public ResponseDTO updateQuantity(@RequestBody CartItemDTO request) {
+        CartItem cartItem = cartItemSevice.updateCart(request.getId(), request.getQuantity());
+        return ResponseDTO.success(cartItem);
+    }
 }
+

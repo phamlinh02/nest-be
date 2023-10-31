@@ -17,6 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CartItemDTO {
     private long id;
-    private ProductDTO products;
-    private AccountDTO account;
+    private ProductDTO productId;
+    private Long accountId;
+    private long quantity;
 }
