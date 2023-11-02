@@ -26,9 +26,8 @@ public class CartItemResource {
     }
 
     @GetMapping("/list")
-    public ResponseDTO getAllCartByIdAccount(@RequestBody Map<String, Long> requestBody) {
+    public ResponseDTO getAllCartByIdAccount(@RequestParam Long accountId) {
         try {
-            Long accountId = requestBody.get("accountId");
             List<CartItem> cartItems = cartItemSevice.findByIdAccount(accountId);
             return ResponseDTO.success(cartItems);
         } catch (Exception e) {
