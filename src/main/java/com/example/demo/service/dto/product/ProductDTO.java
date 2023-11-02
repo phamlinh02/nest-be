@@ -25,6 +25,8 @@ public class ProductDTO {
     private String image;
 
     private Boolean isActive;
+    
+    private String categoryId;
 
     private String categoryName;
 }

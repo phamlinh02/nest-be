@@ -11,6 +11,8 @@ public class CategoryDTO {
 	private Long id;
 	
 	private String name;
+	
+	private String imageImage;
     
     private Boolean isActive;
     
