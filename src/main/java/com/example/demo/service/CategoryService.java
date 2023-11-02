@@ -38,6 +38,7 @@ public class CategoryService {
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy danh mục sản phẩm"));
 
 		category.setName(updateCategoryDTO.getName());
+		category.setImageCategory(updateCategoryDTO.getImageCategory());
 		category.setIsActive(updateCategoryDTO.getIsActive());
 
 		Category categoryEntity = MapperUtils.map(category, Category.class);

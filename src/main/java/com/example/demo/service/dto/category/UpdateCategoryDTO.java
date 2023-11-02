@@ -12,5 +12,7 @@ public class UpdateCategoryDTO {
 
     private String name;
     
+    private String imageCategory;
+    
     private Boolean isActive;
 }

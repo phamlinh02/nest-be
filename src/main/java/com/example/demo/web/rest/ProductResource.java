@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api/nest/product")
 @AllArgsConstructor
+@CrossOrigin("*")
 public class ProductResource {
 	private final ProductService productService;
 
