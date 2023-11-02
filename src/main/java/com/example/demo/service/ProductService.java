@@ -28,6 +28,10 @@ public class ProductService {
 	private final IProductRepository productRepository;
 	private final ICategotyRepository categoryRepository;
 
+	public Product findById(Long id) {
+		return productRepository.findById(id).get();
+	}
+
 	public Page<ProductDTO> getAllProduct(Pageable pageable) {
 		Page<Product> productPage = this.productRepository.findAll(pageable);
 		List<ProductDTO> productDTOList = new ArrayList<>();
@@ -116,33 +120,33 @@ public class ProductService {
 	public Page<ProductDTO> searchProductsByName(String productName, Pageable pageable) {
 		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
 
-        Page<ProductDTO> productDTOPage = productPage.map(product -> {
-            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+		Page<ProductDTO> productDTOPage = productPage.map(product -> {
+			ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 
-            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-            if (category != null) {
-                productDTO.setCategoryName(category.getName());
-            }
+			Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+			if (category != null) {
+				productDTO.setCategoryName(category.getName());
+			}
 
-            return productDTO;
-        });
+			return productDTO;
+		});
 
-        return productDTOPage;
+		return productDTOPage;
 	}
-	
+
 	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
 		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
-        Page<ProductDTO> productDTOPage = productPage.map(product -> {
-            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+		Page<ProductDTO> productDTOPage = productPage.map(product -> {
+			ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 
-            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-            if (category != null) {
-                productDTO.setCategoryName(category.getName());
-            }
-            return productDTO;
-        });
+			Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+			if (category != null) {
+				productDTO.setCategoryName(category.getName());
+			}
+			return productDTO;
+		});
 
-        return productDTOPage;
-    }
+		return productDTOPage;
+	}
 }

@@ -12,7 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import com.example.demo.security.jwt.AuthEntryPointJwt;
-import com.example.demo.service.AccountDetailsServiceImpl;
+import com.example.demo.service.util.serviceImpl.AccountDetailsServiceImpl;
+
 
 @Configuration
 @EnableWebSecurity

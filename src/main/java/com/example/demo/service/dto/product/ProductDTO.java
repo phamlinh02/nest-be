@@ -12,19 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductDTO {
-	private Long id;
+    private Long id;
 
-	private String productName;
+    private String productName;
 
-	private BigDecimal price;
+    private BigDecimal price;
 
-	private Long quantity;
+    private Long quantity;
 
-	private String description;
+    private String description;
 
-	private String image;
-	
-	private Boolean isActive;
+    private String image;
 
-	private String categoryName;
+    private Boolean isActive;
+
+    private String categoryName;
 }
