@@ -35,7 +35,8 @@ public class CartItemImpl implements CartItemService {
             }
 
             item.setProductId(product); // Gán thông tin sản phẩm cho trường productId trong CartItem
-            CartItem existingCartItem = cartItemReponse.findByAccountIdAndProductId(item.getAccountId(),item.getProductId());
+            item.setQuantity(1L);
+            CartItem existingCartItem = cartItemReponse.findByAccountIdAndProductId(item.getAccountId(), item.getProductId());
             if (existingCartItem != null) {
                 existingCartItem.setQuantity(existingCartItem.getQuantity() + 1L);
                 cartItemReponse.save(existingCartItem);
@@ -61,12 +62,23 @@ public class CartItemImpl implements CartItemService {
     }
 
     @Override
-    public CartItem updateCart(Long id, Long quantity) {
-        CartItem cartItem = cartItemReponse.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not found product in Cart"));
-        cartItem.setQuantity(quantity);
-        cartItemReponse.save(cartItem);
-        return cartItem;
+    public void updateCartItems(Long accountId, List<CartItem> cartItems) {
+        List<CartItem> existingCartItems = cartItemReponse.findByIdAccount(accountId);
+        for (CartItem existingItem : existingCartItems) {
+            // Tìm cart item mới trong danh sách cart items được cung cấp
+            CartItem updatedItem = cartItems.stream()
+                    .filter(item -> item.getId().equals(existingItem.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (updatedItem != null) {
+                // Cập nhật số lượng mới
+                existingItem.setQuantity(updatedItem.getQuantity());
+            }
+        }
+        // Lưu lại các thay đổi trong giỏ hàng
+        cartItemReponse.saveAll(existingCartItems);
     }
+
+
 }
 

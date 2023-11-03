@@ -13,6 +13,8 @@ public interface CartItemService {
 
     public void removeById(Long id);
 
-    CartItem updateCart(Long id, Long quantity);
+    public void updateCartItems(Long accountId, List<CartItem> cartItems);
+
+
 
 }
