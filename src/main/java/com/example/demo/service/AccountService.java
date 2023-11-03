@@ -18,6 +18,7 @@ import com.example.demo.service.dto.account.CreateAccountDTO;
 import com.example.demo.service.dto.account.ForgetPassDTO;
 import com.example.demo.service.dto.account.JwtResponse;
 import com.example.demo.service.dto.account.PayloadLogin;
+import com.example.demo.service.dto.account.UpdateAccountByUserDTO;
 import com.example.demo.service.dto.account.UpdateAccountDTO;
 import com.example.demo.service.mapper.MapperUtils;
 import com.example.demo.service.util.PasswordGenerator;
@@ -269,6 +270,19 @@ public class AccountService {
 		
 		accountDTO.setRoleName(updateAccountDTO.getRoleName());
 
+		return accountDTO;
+	}
+	public AccountDTO updateAccountByUser(UpdateAccountByUserDTO updateAccountDTO) {
+		Account account = this.accountRepository.findById(updateAccountDTO.getId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy account"));
+		account.setUsername(updateAccountDTO.getUsername());
+		account.setFullName(updateAccountDTO.getFullName());
+		account.setEmail(updateAccountDTO.getEmail());
+		account.setAddress(updateAccountDTO.getAddress());
+		account.setPhone(updateAccountDTO.getPhone());
+		account.setAvatar(updateAccountDTO.getAvatar());
+		Account accountEntity = MapperUtils.map(account, Account.class);
+		AccountDTO accountDTO = MapperUtils.map(this.accountRepository.save(accountEntity), AccountDTO.class);
 		return accountDTO;
 	}
 	
