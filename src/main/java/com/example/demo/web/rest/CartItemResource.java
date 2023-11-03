@@ -1,5 +1,6 @@
 package com.example.demo.web.rest;
 
+import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.CartItem;
 import com.example.demo.domain.Product;
 import com.example.demo.service.dto.ResponseDTO;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +48,8 @@ public class CartItemResource {
     }
 
     @DeleteMapping("/remove")
-    public ResponseDTO removeAllItem(@RequestBody Map<String, Long> requestBody) {
+    public ResponseDTO removeAllItem(@RequestParam Long accountId) {
         try {
-            Long accountId = requestBody.get("accountId");
             cartItemSevice.remove(accountId);
             return ResponseDTO.success(accountId);
         } catch (Exception e) {
@@ -57,9 +58,8 @@ public class CartItemResource {
     }
 
     @DeleteMapping("removeid")
-    public ResponseDTO removeById(@RequestBody Map<String, Long> requestBody) {
+    public ResponseDTO removeById(@RequestParam Long id) {
         try {
-            Long id = requestBody.get("id");
             cartItemSevice.removeById(id);
             return ResponseDTO.success(id);
         } catch (Exception e) {
@@ -68,9 +68,26 @@ public class CartItemResource {
     }
 
     @PutMapping("/update")
-    public ResponseDTO updateQuantity(@RequestBody CartItemDTO request) {
-        CartItem cartItem = cartItemSevice.updateCart(request.getId(), request.getQuantity());
-        return ResponseDTO.success(cartItem);
+    public ResponseDTO updateCartItems(@RequestParam Long accountId, @RequestBody List<CartItemDTO> cartItemsDTO) {
+        try {
+            // Chuyển đổi danh sách CartItemDTO thành danh sách CartItem
+            List<CartItem> cartItems = new ArrayList<>();
+            for (CartItemDTO cartItemDTO : cartItemsDTO) {
+                CartItem cartItem = new CartItem();
+                cartItem.setId(cartItemDTO.getId());
+                cartItem.setAccountId(accountId);
+                cartItem.setQuantity(cartItemDTO.getQuantity());
+                cartItems.add(cartItem);
+            }
+            // Cập nhật các CartItem trong giỏ hàng
+            cartItemSevice.updateCartItems(accountId, cartItems);
+            // Trả về thông báo thành công
+            return ResponseDTO.success("Cart items updated successfully");
+        } catch (Exception e) {
+            // Trả về thông báo lỗi nếu xảy ra lỗi
+            return ResponseDTO.error();
+        }
     }
 }
+
 
