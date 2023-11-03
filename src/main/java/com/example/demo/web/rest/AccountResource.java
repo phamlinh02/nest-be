@@ -10,6 +10,7 @@ import com.example.demo.service.dto.account.ChangePassDTO;
 import com.example.demo.service.dto.account.CreateAccountDTO;
 import com.example.demo.service.dto.account.ForgetPassDTO;
 import com.example.demo.service.dto.account.PayloadLogin;
+import com.example.demo.service.dto.account.UpdateAccountByUserDTO;
 import com.example.demo.service.dto.account.UpdateAccountDTO;
 
 import io.swagger.annotations.ApiOperation;
@@ -38,8 +39,14 @@ public class AccountResource {
 	
 	@PostMapping("/update")
     @ApiOperation(value = "Thêm người dùng")
-    public ResponseDTO saveUser(@Validated @RequestBody UpdateAccountDTO account) {
+    public ResponseDTO updateUser(@Validated @RequestBody UpdateAccountDTO account) {
         return ResponseDTO.success(this.accountService.updateAccount(account));
+    }
+	
+	@PostMapping("/updateByUser")
+    @ApiOperation(value = "Cập nhật thông tin người dùng")
+    public ResponseDTO updateAccountByUser(@Validated @RequestBody UpdateAccountByUserDTO account) {
+        return ResponseDTO.success(this.accountService.updateAccountByUser(account));
     }
 
 	@GetMapping("/get-user")
