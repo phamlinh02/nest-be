@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -118,35 +119,44 @@ public class ProductService {
 	}
 
 	public Page<ProductDTO> searchProductsByName(String productName, Pageable pageable) {
-		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
+	    Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
 
-		Page<ProductDTO> productDTOPage = productPage.map(product -> {
-			ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+	    List<ProductDTO> activeProducts = productPage.getContent()
+	        .stream()
+	        .filter(product -> product.getIsActive())
+	        .map(product -> {
+	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+	            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+	            if (category != null) {
+	                productDTO.setCategoryName(category.getName());
+	            }
+	            return productDTO;
+	        })
+	        .collect(Collectors.toList());
 
-			Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-			if (category != null) {
-				productDTO.setCategoryName(category.getName());
-			}
+	    Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
 
-			return productDTO;
-		});
-
-		return productDTOPage;
+	    return productDTOPage;
 	}
 
 	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
-		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
+	    Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
-		Page<ProductDTO> productDTOPage = productPage.map(product -> {
-			ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+	    List<ProductDTO> activeProducts = productPage.getContent()
+	        .stream()
+	        .filter(product -> product.getIsActive())
+	        .map(product -> {
+	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+	            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+	            if (category != null) {
+	                productDTO.setCategoryName(category.getName());
+	            }
+	            return productDTO;
+	        })
+	        .collect(Collectors.toList());
 
-			Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-			if (category != null) {
-				productDTO.setCategoryName(category.getName());
-			}
-			return productDTO;
-		});
+	    Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
 
-		return productDTOPage;
+	    return productDTOPage;
 	}
 }
