@@ -35,10 +35,9 @@ public class CartItemImpl implements CartItemService {
             }
 
             item.setProductId(product); // Gán thông tin sản phẩm cho trường productId trong CartItem
-            item.setQuantity(1L);
             CartItem existingCartItem = cartItemReponse.findByAccountIdAndProductId(item.getAccountId(), item.getProductId());
             if (existingCartItem != null) {
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1L);
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + item.getQuantity());
                 cartItemReponse.save(existingCartItem);
                 return existingCartItem;
             } else {
