@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.config.Constant;
 import com.example.demo.config.exception.common.NotFoundException;
@@ -25,6 +27,10 @@ import com.example.demo.service.util.PasswordGenerator;
 
 import jakarta.transaction.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -272,18 +278,44 @@ public class AccountService {
 
 		return accountDTO;
 	}
-	public AccountDTO updateAccountByUser(UpdateAccountByUserDTO updateAccountDTO) {
-		Account account = this.accountRepository.findById(updateAccountDTO.getId())
-				.orElseThrow(() -> new NotFoundException("Không tìm thấy account"));
-		account.setUsername(updateAccountDTO.getUsername());
-		account.setFullName(updateAccountDTO.getFullName());
-		account.setEmail(updateAccountDTO.getEmail());
-		account.setAddress(updateAccountDTO.getAddress());
-		account.setPhone(updateAccountDTO.getPhone());
-		account.setAvatar(updateAccountDTO.getAvatar());
-		Account accountEntity = MapperUtils.map(account, Account.class);
-		AccountDTO accountDTO = MapperUtils.map(this.accountRepository.save(accountEntity), AccountDTO.class);
-		return accountDTO;
+	public AccountDTO updateAccountByUser(UpdateAccountByUserDTO updateAccountDTO, MultipartFile avatarFile) {
+	    Account account = this.accountRepository.findById(updateAccountDTO.getId())
+	            .orElseThrow(() -> new NotFoundException("Không tìm thấy account"));
+	    
+	    String oldAvatarPath = account.getAvatar();
+
+	    account.setUsername(updateAccountDTO.getUsername());
+	    account.setFullName(updateAccountDTO.getFullName());
+	    account.setEmail(updateAccountDTO.getEmail());
+	    account.setAddress(updateAccountDTO.getAddress());
+	    account.setPhone(updateAccountDTO.getPhone());
+
+	    if (avatarFile != null) {
+	        try {
+	            String fileName = StringUtils.cleanPath(avatarFile.getOriginalFilename());
+	            String uploadDir = "uploads";
+
+	            Path uploadPath = Paths.get(uploadDir);
+
+	            if (!Files.exists(uploadPath)) {
+	                Files.createDirectories(uploadPath);
+	            }
+	            Path filePath = uploadPath.resolve(fileName);
+	            Files.copy(avatarFile.getInputStream(), filePath);
+	            account.setAvatar(fileName);
+	            
+	            if (oldAvatarPath != null) {
+	                Path oldFilePath = uploadPath.resolve(oldAvatarPath);
+	                Files.delete(oldFilePath);
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    Account accountEntity = MapperUtils.map(account, Account.class);
+	    AccountDTO accountDTO = MapperUtils.map(this.accountRepository.save(accountEntity), AccountDTO.class);
+	    return accountDTO;
 	}
 	
 	public String checkAsyncSendEmail() {

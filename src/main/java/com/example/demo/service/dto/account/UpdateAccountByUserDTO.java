@@ -1,5 +1,7 @@
 package com.example.demo.service.dto.account;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.config.Constant;
 
 import lombok.AllArgsConstructor;
@@ -16,5 +18,5 @@ public class UpdateAccountByUserDTO {
     private String fullName;
     private String address;
     private String phone;
-    private String avatar;
+    private MultipartFile avatar;
 }
