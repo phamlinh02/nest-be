@@ -3,6 +3,7 @@ package com.example.demo.web.rest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.service.AccountService;
 import com.example.demo.service.dto.ResponseDTO;
@@ -44,10 +45,12 @@ public class AccountResource {
     }
 	
 	@PostMapping("/updateByUser")
-    @ApiOperation(value = "Cập nhật thông tin người dùng")
-    public ResponseDTO updateAccountByUser(@Validated @RequestBody UpdateAccountByUserDTO account) {
-        return ResponseDTO.success(this.accountService.updateAccountByUser(account));
-    }
+	@ApiOperation(value = "Cập nhật thông tin người dùng")
+	public ResponseDTO updateAccountByUser(
+	    @Validated @ModelAttribute UpdateAccountByUserDTO account,
+	    @RequestParam("avatarFile") MultipartFile avatarFile) {
+	    return ResponseDTO.success(this.accountService.updateAccountByUser(account, avatarFile));
+	}
 
 	@GetMapping("/get-user")
     @ApiOperation(value = "Lấy thông tin người dùng")
