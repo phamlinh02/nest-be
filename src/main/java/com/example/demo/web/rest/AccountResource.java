@@ -54,8 +54,8 @@ public class AccountResource {
 
 	@GetMapping("/get-user")
     @ApiOperation(value = "Lấy thông tin người dùng")
-    public ResponseDTO loadUserByUsername(String username) {
-        return ResponseDTO.success(this.accountService.loadUserByUsername(username));
+    public ResponseDTO loadUserByUsername(Long id) {
+        return ResponseDTO.success(this.accountService.loadUserByUsername(id));
     }
 	
 	@PostMapping("/register") 

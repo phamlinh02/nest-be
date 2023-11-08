@@ -145,8 +145,8 @@ public class AccountService {
 		}
 	}
 
-	public AccountDetailDTO loadUserByUsername(String username) {
-		Account account = this.accountRepository.findByUsername(username)
+	public AccountDetailDTO loadUserByUsername(Long id) {
+		Account account = this.accountRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy account"));
 
 		if (account == null) {
