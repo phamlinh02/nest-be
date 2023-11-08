@@ -11,6 +11,8 @@ public interface IAccountRepository extends JpaRepository<Account, Long>{
 	//Find Account by Username
 	Optional<Account> findByUsername(String username);
 	
+	Optional<Account> findById(Long id);
+	
 	//Check if the username already exists or not
     Boolean existsByUsername(String username);
 
