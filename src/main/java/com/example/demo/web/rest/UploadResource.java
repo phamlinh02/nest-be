@@ -48,10 +48,10 @@ public class UploadResource {
         }
     }
 
-    @GetMapping("/image/{filename:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+    @GetMapping("/image/{type}/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String type,@PathVariable String filename) {
         try {
-            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Path filePath = fileStorageLocation.resolve(type).resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists()) {

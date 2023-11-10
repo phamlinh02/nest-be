@@ -2,6 +2,8 @@ package com.example.demo.service.dto.account;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.config.Constant;
 import com.example.demo.domain.Role;
 
@@ -35,7 +37,7 @@ public class CreateAccountDTO {
 	@Pattern(regexp = "^[0-9]{1,12}$", message = "Số điện thoại không đúng định dạng" )
 	private String phone;
 	
-	private String avatar;
+	private MultipartFile avatar;
 	
 	@Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;

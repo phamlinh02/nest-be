@@ -34,28 +34,30 @@ public class AccountResource {
 	
 	@PostMapping("/save") 
     @ApiOperation(value = "Thêm người dùng")
-    public ResponseDTO saveUser(@Validated @RequestBody CreateAccountDTO account) {
-        return ResponseDTO.success(this.accountService.saveAccount(account));
+    public ResponseDTO saveUser(@Validated @ModelAttribute CreateAccountDTO account,
+    		@RequestParam(value="avatarFile", required = false) MultipartFile avatarFile) {
+        return ResponseDTO.success(this.accountService.saveAccount(account,avatarFile));
     }
 	
 	@PostMapping("/update")
     @ApiOperation(value = "Thêm người dùng")
-    public ResponseDTO updateUser(@Validated @RequestBody UpdateAccountDTO account) {
-        return ResponseDTO.success(this.accountService.updateAccount(account));
+    public ResponseDTO updateUser(@Validated @ModelAttribute UpdateAccountDTO account,
+    	    @RequestParam(value="avatarFile", required = false) MultipartFile avatarFile) {
+        return ResponseDTO.success(this.accountService.updateAccount(account, avatarFile));
     }
 	
 	@PostMapping("/updateByUser")
 	@ApiOperation(value = "Cập nhật thông tin người dùng")
 	public ResponseDTO updateAccountByUser(
 	    @Validated @ModelAttribute UpdateAccountByUserDTO account,
-	    @RequestParam("avatarFile") MultipartFile avatarFile) {
+	    @RequestParam(value="avatarFile", required = false) MultipartFile avatarFile) {
 	    return ResponseDTO.success(this.accountService.updateAccountByUser(account, avatarFile));
 	}
 
 	@GetMapping("/get-user")
     @ApiOperation(value = "Lấy thông tin người dùng")
-    public ResponseDTO loadUserByUsername(Long id) {
-        return ResponseDTO.success(this.accountService.loadUserByUsername(id));
+    public ResponseDTO loadUserById(Long id) {
+        return ResponseDTO.success(this.accountService.loadUserById(id));
     }
 	
 	@PostMapping("/register") 

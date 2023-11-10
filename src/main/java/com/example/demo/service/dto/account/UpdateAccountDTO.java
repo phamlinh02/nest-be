@@ -1,5 +1,7 @@
 package com.example.demo.service.dto.account;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.config.Constant;
 
 import jakarta.persistence.EnumType;
@@ -18,7 +20,7 @@ public class UpdateAccountDTO {
     private String fullName;
     private String address;
     private String phone;
-    private String avatar;
+    private MultipartFile avatar;
     @Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
 }
