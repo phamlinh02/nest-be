@@ -118,7 +118,7 @@ public class AccountService {
 				try {
 					String originalFileName = avatarFile.getOriginalFilename();
 					String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-					newAvatarPath = UUID.randomUUID().toString() + fileExtension;
+					newAvatarPath = "product_" + generateRandomNumber(100, 999) + fileExtension;
 					String uploadDir = "uploads/account";
 					Path uploadPath = Paths.get(uploadDir);
 
@@ -280,7 +280,7 @@ public class AccountService {
 			try {
 				String originalFileName = avatarFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newAvatarPath = UUID.randomUUID().toString() + fileExtension;
+				newAvatarPath = "product_" + generateRandomNumber(100, 999) + fileExtension;
 				String uploadDir = "uploads/account";
 				Path uploadPath = Paths.get(uploadDir);
 
@@ -374,6 +374,10 @@ public class AccountService {
 	public String checkAsyncSendEmail() {
 		notificationService.sendMail(List.of("dotruong0108t@gmail.com"), "sub", "Hello World");
 		return "email";
+	}
+	
+	public int generateRandomNumber(int min, int max) {
+	    return (int) (Math.random() * (max - min + 1) + min);
 	}
 
 }

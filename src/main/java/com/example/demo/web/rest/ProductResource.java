@@ -8,7 +8,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import com.example.demo.service.ProductService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.product.CreateProductDTO;
 import com.example.demo.service.dto.product.UpdateProductDTO;
+import com.example.demo.service.dto.product.UpdateProductStatusDTO;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -48,8 +51,9 @@ public class ProductResource {
 
 	@PostMapping("/save")
 	@ApiOperation(value = "Thêm sản phẩm")
-	public ResponseDTO saveProduct(@Validated @RequestBody CreateProductDTO product) {
-		return ResponseDTO.success(this.productService.saveProduct(product));
+	public ResponseDTO saveProduct(@Validated @ModelAttribute CreateProductDTO product,
+    	    @RequestParam(value="productFile", required = false) MultipartFile productFile) {
+		return ResponseDTO.success(this.productService.saveProduct(product,productFile));
 	}
 
 	@PostMapping("/update")
@@ -69,5 +73,11 @@ public class ProductResource {
 	@ApiOperation(value = "Hiển thị sản phẩm theo category")
 	public ResponseDTO showProductsByCategory(@RequestParam Long categoryId, Pageable pageable) {
 		return ResponseDTO.success(this.productService.showProductsByCategory(categoryId, pageable));
+	}
+	
+	@PostMapping("/update-status")
+	@ApiOperation(value = "Cập nhật trạng thái sản phẩm")
+	public ResponseDTO updateProductStatus(@RequestBody UpdateProductStatusDTO updateStatusDTO) {
+	    return ResponseDTO.success(this.productService.updateProductStatus(updateStatusDTO));
 	}
 }
