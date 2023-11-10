@@ -26,6 +26,7 @@ import com.example.demo.service.dto.product.CreateProductDTO;
 import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.dto.product.ProductDetailDTO;
 import com.example.demo.service.dto.product.UpdateProductDTO;
+import com.example.demo.service.dto.product.UpdateProductStatusDTO;
 import com.example.demo.service.mapper.MapperUtils;
 
 @Service
@@ -58,7 +59,7 @@ public class ProductService {
 
 		return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
 	}
-	
+
 	public Page<ProductDTO> getAllProduct(Pageable pageable) {
 		Page<Product> productPage = this.productRepository.findAll(pageable);
 		List<ProductDTO> productDTOList = new ArrayList<>();
@@ -91,7 +92,7 @@ public class ProductService {
 		return productDetailDTO;
 	}
 
-	public ProductDTO saveProduct(CreateProductDTO product) {
+	public ProductDTO saveProduct(CreateProductDTO product, MultipartFile productFile) {
 		if (product.getCategoryName() == null) {
 			throw new NotFoundException("Không được để trống category");
 		}
@@ -104,6 +105,28 @@ public class ProductService {
 
 		Product productEntity = MapperUtils.map(product, Product.class);
 
+		String newAvatarPath = null;
+		if (productFile != null) {
+			try {
+				String originalFileName = productFile.getOriginalFilename();
+				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+				newAvatarPath = UUID.randomUUID().toString() + fileExtension;
+				String uploadDir = "uploads/product";
+				Path uploadPath = Paths.get(uploadDir);
+
+				if (!Files.exists(uploadPath)) {
+					Files.createDirectories(uploadPath);
+				}
+
+				Path filePath = uploadPath.resolve(newAvatarPath);
+				Files.copy(productFile.getInputStream(), filePath);
+
+				productEntity.setImage(newAvatarPath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		productEntity.setCategoryId(category.getId());
 
 		productEntity = this.productRepository.save(productEntity);
@@ -115,23 +138,23 @@ public class ProductService {
 
 	}
 
-	public ProductDTO updateProduct(UpdateProductDTO updateProductDTO,MultipartFile productFile) {
+	public ProductDTO updateProduct(UpdateProductDTO updateProductDTO, MultipartFile productFile) {
 		Product product = this.productRepository.findById(updateProductDTO.getId())
 				.orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm"));
-		
+
 		String oldImageProductPath = product.getImage();
 
 		product.setProductName(updateProductDTO.getProductName());
 		product.setPrice(updateProductDTO.getPrice());
 		product.setDescription(updateProductDTO.getDescription());
 		product.setIsActive(updateProductDTO.getIsActive());
-		product.setQuantity(updateProductDTO.getQuantity());		
+		product.setQuantity(updateProductDTO.getQuantity());
 		String newImagePath = null;
 		if (productFile != null) {
 			try {
 				String originalFileName = productFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newImagePath = "productId_"+updateProductDTO.getId() + fileExtension;
+				newImagePath = "productId_" + updateProductDTO.getId() + fileExtension;
 				String uploadDir = "uploads/product";
 				Path uploadPath = Paths.get(uploadDir);
 
@@ -173,44 +196,52 @@ public class ProductService {
 	}
 
 	public Page<ProductDTO> searchProductsByName(String productName, Pageable pageable) {
-	    Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
+		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
 
-	    List<ProductDTO> activeProducts = productPage.getContent()
-	        .stream()
-	        .filter(product -> product.getIsActive())
-	        .map(product -> {
-	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
-	            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-	            if (category != null) {
-	                productDTO.setCategoryName(category.getName());
-	            }
-	            return productDTO;
-	        })
-	        .collect(Collectors.toList());
+		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				}).collect(Collectors.toList());
 
-	    Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
+		Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
 
-	    return productDTOPage;
+		return productDTOPage;
 	}
 
 	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
-	    Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
+		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
-	    List<ProductDTO> activeProducts = productPage.getContent()
-	        .stream()
-	        .filter(product -> product.getIsActive())
-	        .map(product -> {
-	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
-	            Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-	            if (category != null) {
-	                productDTO.setCategoryName(category.getName());
-	            }
-	            return productDTO;
-	        })
-	        .collect(Collectors.toList());
+		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				}).collect(Collectors.toList());
 
-	    Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
+		Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
 
-	    return productDTOPage;
+		return productDTOPage;
 	}
+
+	public ProductDTO updateProductStatus(UpdateProductStatusDTO updateStatusDTO) {
+		Product product = this.productRepository.findById(updateStatusDTO.getId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm"));
+
+		product.setIsActive(updateStatusDTO.isActive());
+
+		Product updatedProduct = this.productRepository.save(product);
+
+		ProductDTO productDTO = MapperUtils.map(updatedProduct, ProductDTO.class);
+
+		return productDTO;
+	}
+
 }

@@ -11,19 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductDTO {
-	
-	private String productName;
+public class UpdateProductStatusDTO {
+	private Long id;
+	private boolean isActive;
 
-	private BigDecimal price;
-
-	private Long quantity;
-
-	private String description;
-
-	private MultipartFile image;
-	
-	private Boolean isActive;
-
-	private String categoryName;
 }
