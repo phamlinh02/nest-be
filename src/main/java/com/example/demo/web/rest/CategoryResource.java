@@ -4,10 +4,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.service.CategoryService;
 import com.example.demo.service.dto.ResponseDTO;
@@ -25,6 +28,12 @@ import lombok.AllArgsConstructor;
 public class CategoryResource {
 	private final CategoryService categoryService;
 	
+	@GetMapping("/get-all-active")
+	@ApiOperation(value = "Lấy danh sách danh mục sản phẩm")
+	public ResponseDTO getAllCateogoryIsActive(Pageable pageable) {
+		return ResponseDTO.success(this.categoryService.getAllCategoryIsActive(pageable));
+	}
+	
 	@GetMapping("/get-all")
 	@ApiOperation(value = "Lấy danh sách danh mục sản phẩm")
 	public ResponseDTO getAllCateogory(Pageable pageable) {
@@ -33,13 +42,21 @@ public class CategoryResource {
 	
 	@PostMapping("/save")
 	@ApiOperation(value = "Thêm danh mục sản phẩm")
-	public ResponseDTO saveCategory(@Validated @RequestBody CreateCategoryDTO category) {
-		return ResponseDTO.success(this.categoryService.saveCategory(category));
+	public ResponseDTO saveCategory(@Validated @ModelAttribute CreateCategoryDTO category,
+    	    @RequestParam(value="categoryFile", required = false) MultipartFile categoryFile) {
+		return ResponseDTO.success(this.categoryService.saveCategory(category,categoryFile));
 	}
 	
 	@PostMapping("/update")
 	@ApiOperation(value = "Cập nhật danh mục sản phẩm")
-	public ResponseDTO updateCategory(@Validated @RequestBody UpdateCategoryDTO category) {
-		return ResponseDTO.success(this.categoryService.updateCategory(category));
+	public ResponseDTO updateCategory(@Validated @ModelAttribute UpdateCategoryDTO category,
+    	    @RequestParam(value="categoryFile", required = false) MultipartFile categoryFile) {
+		return ResponseDTO.success(this.categoryService.updateCategory(category,categoryFile));
+	}
+	
+	@GetMapping("/get-category")
+	@ApiOperation(value = "Lấy thông tin danh mục sản phẩm")
+	public ResponseDTO loadCategoryById(Long id) {
+		return ResponseDTO.success(this.categoryService.loadCategoryById(id));
 	}
 }

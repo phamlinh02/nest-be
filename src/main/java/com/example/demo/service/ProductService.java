@@ -110,7 +110,7 @@ public class ProductService {
 			try {
 				String originalFileName = productFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newAvatarPath = UUID.randomUUID().toString() + fileExtension;
+				newAvatarPath = "product_" + generateRandomNumber(100, 999) + fileExtension;
 				String uploadDir = "uploads/product";
 				Path uploadPath = Paths.get(uploadDir);
 
@@ -154,7 +154,7 @@ public class ProductService {
 			try {
 				String originalFileName = productFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newImagePath = "productId_" + updateProductDTO.getId() + fileExtension;
+				newImagePath = "product_" + generateRandomNumber(100, 999) + fileExtension;
 				String uploadDir = "uploads/product";
 				Path uploadPath = Paths.get(uploadDir);
 
@@ -242,6 +242,10 @@ public class ProductService {
 		ProductDTO productDTO = MapperUtils.map(updatedProduct, ProductDTO.class);
 
 		return productDTO;
+	}
+	
+	public int generateRandomNumber(int min, int max) {
+	    return (int) (Math.random() * (max - min + 1) + min);
 	}
 
 }

@@ -118,7 +118,7 @@ public class AccountService {
 				try {
 					String originalFileName = avatarFile.getOriginalFilename();
 					String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-					newAvatarPath = "product_" + generateRandomNumber(100, 999) + fileExtension;
+					newAvatarPath = "account_" + generateRandomNumber(100, 999) + fileExtension;
 					String uploadDir = "uploads/account";
 					Path uploadPath = Paths.get(uploadDir);
 
@@ -280,7 +280,7 @@ public class AccountService {
 			try {
 				String originalFileName = avatarFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newAvatarPath = "product_" + generateRandomNumber(100, 999) + fileExtension;
+				newAvatarPath = "account_" + generateRandomNumber(100, 999) + fileExtension;
 				String uploadDir = "uploads/account";
 				Path uploadPath = Paths.get(uploadDir);
 
@@ -342,7 +342,7 @@ public class AccountService {
 			try {
 				String originalFileName = avatarFile.getOriginalFilename();
 				String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				newAvatarPath = UUID.randomUUID().toString() + fileExtension;
+				newAvatarPath = "account_" + generateRandomNumber(100, 999) + fileExtension;
 				String uploadDir = "uploads/account";
 				Path uploadPath = Paths.get(uploadDir);
 
