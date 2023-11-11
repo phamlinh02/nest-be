@@ -12,7 +12,7 @@ public class CategoryDTO {
 	
 	private String name;
 	
-	private String imageImage;
+	private String imageCategory;
     
     private Boolean isActive;
     

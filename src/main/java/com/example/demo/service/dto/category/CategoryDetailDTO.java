@@ -1,20 +1,24 @@
 package com.example.demo.service.dto.category;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.math.BigDecimal;
+
+import com.example.demo.service.dto.product.ProductDetailDTO;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateCategoryDTO {
+@Builder
+public class CategoryDetailDTO {
 	private Long id;
 
     private String name;
     
-    private MultipartFile imageCategory;
+    private String imageCategory;
     
     private Boolean isActive;
 }
