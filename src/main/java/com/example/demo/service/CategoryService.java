@@ -12,11 +12,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.Category;
+import com.example.demo.domain.Role;
 import com.example.demo.repository.ICategotyRepository;
 import com.example.demo.service.dto.category.CategoryDTO;
 import com.example.demo.service.dto.category.CategoryDetailDTO;
 import com.example.demo.service.dto.category.CreateCategoryDTO;
 import com.example.demo.service.dto.category.UpdateCategoryDTO;
+import com.example.demo.service.dto.category.UpdateCategoryStatusDTO;
+import com.example.demo.service.dto.role.RoleDTO;
+import com.example.demo.service.dto.role.UpdateRoleStatusDTO;
 import com.example.demo.service.mapper.MapperUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -118,6 +122,20 @@ public class CategoryService {
 
 		return categoryDetailDTO;
 	}
+	
+	public CategoryDTO updateCategoryStatus(UpdateCategoryStatusDTO updateStatusDTO) {
+		Category category = this.categoryRepository.findById(updateStatusDTO.getId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy danh mục sản phẩm"));
+
+		category.setIsActive(updateStatusDTO.isActive());
+
+		Category updatedCategory = this.categoryRepository.save(category);
+
+		CategoryDTO categoryDTO = MapperUtils.map(updatedCategory, CategoryDTO.class);
+
+		return categoryDTO;
+	}
+	
 	public int generateRandomNumber(int min, int max) {
 	    return (int) (Math.random() * (max - min + 1) + min);
 	}

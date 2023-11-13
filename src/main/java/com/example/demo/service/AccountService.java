@@ -57,7 +57,7 @@ public class AccountService {
 	public Page<AccountDTO> getAllAccount(Pageable pageable) {
 		Page<AccountDTO> accounts = MapperUtils.mapEntityPageIntoDtoPage(this.accountRepository.findAll(pageable),
 				AccountDTO.class);
-
+		
 		for (AccountDTO accountDTO : accounts.getContent()) {
 			List<Authority> authorities = authorityRepository.findByAccountId(accountDTO.getId());
 			if (!authorities.isEmpty()) {

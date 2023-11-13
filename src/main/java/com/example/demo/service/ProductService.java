@@ -61,21 +61,24 @@ public class ProductService {
 	}
 
 	public Page<ProductDTO> getAllProduct(Pageable pageable) {
-		Page<Product> productPage = this.productRepository.findAll(pageable);
-		List<ProductDTO> productDTOList = new ArrayList<>();
+	    Page<Product> productPage = this.productRepository.findAll(pageable);
+	    List<ProductDTO> productDTOList = new ArrayList<>();
 
-		for (Product product : productPage.getContent()) {
-			ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+	    for (Product product : productPage.getContent()) {
+	        Category category = this.categoryRepository.findById(product.getCategoryId()).orElse(null);
 
-			Category category = this.categoryRepository.findById(product.getCategoryId()).orElse(null);
-			if (category != null) {
-				productDTO.setCategoryName(category.getName());
-			}
+	        if (category == null || category.getIsActive()) {
+	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 
-			productDTOList.add(productDTO);
-		}
+	            if (category != null) {
+	                productDTO.setCategoryName(category.getName());
+	            }
 
-		return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
+	            productDTOList.add(productDTO);
+	        }
+	    }
+
+	    return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
 	}
 
 	public ProductDetailDTO loadProductById(Long id) {
