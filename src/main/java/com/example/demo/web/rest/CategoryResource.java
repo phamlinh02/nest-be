@@ -16,7 +16,7 @@ import com.example.demo.service.CategoryService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.category.CreateCategoryDTO;
 import com.example.demo.service.dto.category.UpdateCategoryDTO;
-import com.example.demo.service.dto.product.CreateProductDTO;
+import com.example.demo.service.dto.category.UpdateCategoryStatusDTO;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -58,5 +58,11 @@ public class CategoryResource {
 	@ApiOperation(value = "Lấy thông tin danh mục sản phẩm")
 	public ResponseDTO loadCategoryById(Long id) {
 		return ResponseDTO.success(this.categoryService.loadCategoryById(id));
+	}
+	
+	@PostMapping("/update-status")
+	@ApiOperation(value = "Cập nhật trạng thái danh mục sản phẩm")
+	public ResponseDTO updateCategoryStatus(@RequestBody UpdateCategoryStatusDTO updateStatusDTO) {
+	    return ResponseDTO.success(this.categoryService.updateCategoryStatus(updateStatusDTO));
 	}
 }
