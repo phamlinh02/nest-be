@@ -4,6 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.domain.Bill;
 
-public interface IOrderRepository extends JpaRepository<Bill, Long>, IOrderRepositoryCustom{
+import java.util.Date;
+import java.util.List;
 
+public interface IOrderRepository extends JpaRepository<Bill, Long>, IOrderRepositoryCustom {
+    List<Bill> findByOrderDateBetween(Date startDate, Date endDate);
 }
