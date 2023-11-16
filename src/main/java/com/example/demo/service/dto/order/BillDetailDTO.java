@@ -21,4 +21,5 @@ public class BillDetailDTO {
     private ProductDTO productDTO;
     private Integer quantity;
     private BigDecimal price;
+    private Long productId;
 }

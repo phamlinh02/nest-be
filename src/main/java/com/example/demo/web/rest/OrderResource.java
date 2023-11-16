@@ -28,4 +28,9 @@ public class OrderResource {
     public ResponseDTO updateBill(@RequestBody BillDTO dto){
         return ResponseDTO.success(this.orderService.updateStatusBill(dto));
     }
+
+    @GetMapping("/get-detail/{id}")
+    public ResponseDTO getDetailBill(@PathVariable Long id){
+        return ResponseDTO.success(this.orderService.getBillDetail(id));
+    }
 }
