@@ -23,7 +23,10 @@ import jakarta.persistence.*;
 								@ColumnResult(name = "description", type = String.class),
 								@ColumnResult(name = "reasonDeny", type = String.class),
 								@ColumnResult(name = "countOrder", type = Long.class),
-								@ColumnResult(name = "sumPriceBill", type = BigDecimal.class)
+								@ColumnResult(name = "sumPriceBill", type = BigDecimal.class),
+								@ColumnResult(name = "email", type = String.class),
+								@ColumnResult(name = "username", type = String.class),
+								@ColumnResult(name = "fullName", type = String.class)
 						}
 				)
 		}
