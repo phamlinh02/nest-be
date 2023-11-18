@@ -44,20 +44,22 @@ public class WebSecurityConfig {
 
 	    return authenticationProvider;
 	}
-	
 
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-		.authorizeRequests()
-		.requestMatchers("/**")
-		.permitAll().anyRequest()
-		.authenticated()
-		.and()
-		.formLogin().disable()
-		.logout()
-		.permitAll();
-		http.authenticationProvider(customAuthenticationProvider());
+		http.authorizeHttpRequests((authz) -> 
+		authz
+				.requestMatchers("/api/nest/product/**, /api/nest/category/**, /api/nest/uploads/**")
+				.permitAll()
+				.anyRequest()
+				.authenticated())
+				.formLogin(form -> form
+						.permitAll())
+				.logout((logout) -> logout
+						.permitAll());
+		
 		return http.build();
 	}
+	
 }
