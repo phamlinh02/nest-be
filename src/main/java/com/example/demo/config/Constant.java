@@ -58,7 +58,8 @@ public class Constant {
         PROCESSING,
         CANCELLED,
         COMPLETED,
-        PENDING
+        PENDING,
+        NEW
     }
 
     public enum ROLE_USER{

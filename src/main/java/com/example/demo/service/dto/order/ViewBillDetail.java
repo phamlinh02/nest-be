@@ -14,7 +14,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ViewBillDetail {
     private AccountDTO account;
-    private ProductDTO product;
     private List<BillDetailDTO> billDetails;
     private BillDTO bill;
 }
