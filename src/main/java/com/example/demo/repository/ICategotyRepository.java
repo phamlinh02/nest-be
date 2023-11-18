@@ -17,4 +17,5 @@ public interface ICategotyRepository extends JpaRepository<Category, Long>{
 	//Show category list using IsActive
 	Page<Category> findByIsActiveTrue(Pageable pageable);
 	
+	
 }

@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -19,5 +20,6 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	
 	//Display products list by categoryId
 	Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+	
 	
 }
