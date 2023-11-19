@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PayloadLogin {
 	
+	private String token;
+	
 	private String username;
 	
 	private String password;

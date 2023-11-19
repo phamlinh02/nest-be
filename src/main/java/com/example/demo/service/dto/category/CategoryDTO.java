@@ -16,4 +16,6 @@ public class CategoryDTO {
     
     private Boolean isActive;
     
+    private Long productCount;
+    
 }

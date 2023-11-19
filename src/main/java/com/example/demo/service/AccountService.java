@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.config.Constant;
@@ -12,6 +11,7 @@ import com.example.demo.domain.Role;
 import com.example.demo.repository.IAccountRepository;
 import com.example.demo.repository.IAuthorityRepository;
 import com.example.demo.repository.IRoleRepository;
+import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.service.AccountDetailsImpl;
 import com.example.demo.service.dto.account.AccountDTO;
 import com.example.demo.service.dto.account.AccountDetailDTO;
@@ -32,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +53,9 @@ public class AccountService {
 	private final IAuthorityRepository authorityRepository;
 	private final AuthenticationProvider authenticationProvider;
 	private final NotificationService notificationService;
+	private final JwtUtils jwtUtils;
+	
+	
 
 	public Page<AccountDTO> getAllAccount(Pageable pageable) {
 		Page<AccountDTO> accounts = MapperUtils.mapEntityPageIntoDtoPage(this.accountRepository.findAll(pageable),
@@ -191,6 +194,28 @@ public class AccountService {
 			return accountDetailDTO;
 		}
 	}
+	
+	public AccountDetailDTO getCurrentUser(String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Account account = this.accountRepository.findByUsername(username)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy account"));
+
+		List<Authority> authorities = authorityRepository.findByAccountId(account.getId());
+
+		if (!authorities.isEmpty()) {
+			Authority authority = authorities.get(0);
+			Role role = roleRepository.findById(authority.getRoleId())
+					.orElseThrow(() -> new NotFoundException("Không tìm thấy role"));
+			Constant.ROLE_USER roleName = role.getRoleName();
+			AccountDetailDTO accountDetailDTO = MapperUtils.map(account, AccountDetailDTO.class);
+			accountDetailDTO.setRoleName(roleName);
+			return accountDetailDTO;
+		}
+
+		AccountDetailDTO accountDetailDTO = MapperUtils.map(account, AccountDetailDTO.class);
+		return accountDetailDTO;
+        
+    }
 
 	public JwtResponse login(PayloadLogin payloadLogin) {
 
@@ -205,11 +230,19 @@ public class AccountService {
 					.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
 			AccountDetailsImpl accountDetails = (AccountDetailsImpl) authentication.getPrincipal();
 
-			JwtResponse jwtResponse = new JwtResponse(accountDetails.getId(), accountDetails.getUsername(),
-					accountDetails.getEmail(), accountDetails.getFullName(), accountDetails.getAddress(),
-					accountDetails.getPhone(), accountDetails.getAvatar(), accountDetails.getRoleName());
+			JwtResponse jwtResponse = new JwtResponse(
+					jwt, "Bearer",
+					accountDetails.getId(), 
+					accountDetails.getUsername(),
+					accountDetails.getEmail(), 
+					accountDetails.getFullName(), 
+					accountDetails.getAddress(),
+					accountDetails.getPhone(), 
+					accountDetails.getAvatar(), 
+					accountDetails.getRoleName());
 			return jwtResponse;
 		} else {
 			throw new NotFoundException("Sai mật khẩu");
@@ -379,5 +412,9 @@ public class AccountService {
 	public int generateRandomNumber(int min, int max) {
 	    return (int) (Math.random() * (max - min + 1) + min);
 	}
-
+	
+	
 }
+
+
+

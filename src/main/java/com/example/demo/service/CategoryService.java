@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +17,7 @@ import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Role;
 import com.example.demo.repository.ICategotyRepository;
+import com.example.demo.repository.IProductRepository;
 import com.example.demo.service.dto.category.CategoryDTO;
 import com.example.demo.service.dto.category.CategoryDetailDTO;
 import com.example.demo.service.dto.category.CreateCategoryDTO;
@@ -29,11 +33,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryService {
 	private final ICategotyRepository categoryRepository;
+	private final IProductRepository productRepository;
 	
 	public Page<CategoryDTO> getAllCategoryIsActive(Pageable pageable) {
-        Page<CategoryDTO> categories = MapperUtils.mapEntityPageIntoDtoPage(this.categoryRepository.findByIsActiveTrue(pageable), CategoryDTO.class);
-        return categories;
-    }
+	    Page<CategoryDTO> categories = MapperUtils.mapEntityPageIntoDtoPage(
+	        categoryRepository.findByIsActiveTrue(pageable), CategoryDTO.class
+	    );
+
+	    List<CategoryDTO> categoriesWithProductCount = new ArrayList<>();
+	    for (CategoryDTO category : categories.getContent()) {
+	        Long productCount = productRepository.countByCategoryIdAndIsActiveTrue(category.getId());
+	        category.setProductCount(productCount);
+	        categoriesWithProductCount.add(category);
+	    }
+
+	    return new PageImpl<>(categoriesWithProductCount, pageable, categories.getTotalElements());
+	}
 	
 	public Page<CategoryDTO> getAllCategory(Pageable pageable) {
         Page<CategoryDTO> categories = MapperUtils.mapEntityPageIntoDtoPage(this.categoryRepository.findAll(pageable), CategoryDTO.class);
