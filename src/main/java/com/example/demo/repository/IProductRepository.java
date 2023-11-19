@@ -21,5 +21,7 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	//Display products list by categoryId
 	Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 	
+	Long countByCategoryIdAndIsActiveTrue(Long categoryId);
+
 	
 }

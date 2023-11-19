@@ -12,14 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtResponse {
+	private String token;
+	private String type = "Bearer";
 	private Long id;
-    private String username;
-    private String email;
-    private String fullName;
-    private String address;
-    private String phone;
-    private String avatar;
+	private String username;
+	private String email;
+	private String fullName;
+	private String address;
+	private String phone;
+	private String avatar;
 
-    @Enumerated(EnumType.STRING)
-    private Constant.ROLE_USER roleName;
+	@Enumerated(EnumType.STRING)
+	private Constant.ROLE_USER roleName;
 }

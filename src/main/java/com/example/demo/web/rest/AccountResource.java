@@ -1,10 +1,12 @@
 package com.example.demo.web.rest;
 
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.account.ChangePassDTO;
@@ -22,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 public class AccountResource {
 	private final AccountService accountService;
 	
-	public AccountResource(AccountService accountService) {
+	public AccountResource(AccountService accountService,JwtUtils jwtUtils) {
 		this.accountService = accountService;
 	}
 	
@@ -89,4 +91,12 @@ public class AccountResource {
     public ResponseDTO existsByUsername() {
         return ResponseDTO.success(this.accountService.checkAsyncSendEmail());
     }
+	
+	@GetMapping("/get-current-user")
+    @ApiOperation(value = "Lấy thông tin người dùng hiện tại")
+    public ResponseDTO getCurrentUser(@RequestHeader("Authorization") String token) {
+        return ResponseDTO.success(this.accountService.getCurrentUser(token));
+    }
+	
+		 	
 }
