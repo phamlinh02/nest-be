@@ -46,8 +46,8 @@ public class WebSecurityConfig {
 
 	    return authenticationProvider;
 	}
-	
 
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
@@ -58,4 +58,5 @@ public class WebSecurityConfig {
 		http.authenticationProvider(customAuthenticationProvider());
 		return http.build();
 	}
+	
 }
