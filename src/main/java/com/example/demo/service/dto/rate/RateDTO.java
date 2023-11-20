@@ -1,33 +1,38 @@
-package com.example.demo.domain;
+package com.example.demo.service.dto.rate;
 
 import java.util.Date;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "Rate")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Rate {
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@NoArgsConstructor
+@Builder
+public class RateDTO {
+	
+	private Long id;
 
     private Long productId;
 
     private Long accountId;
+    
+    private String accountName;
+    
+    private String accountImage;
     
     @Temporal(TemporalType.DATE)
 	private Date rateDate;
 
     private Integer star;
 
-    @Column(nullable = false)
     private String comment;
-
+    
     private String image;
+
 }
