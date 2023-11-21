@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Product;
+import com.example.demo.domain.Rate;
 import com.example.demo.repository.ICategotyRepository;
 import com.example.demo.repository.IProductRepository;
+import com.example.demo.repository.IRateRepository;
 import com.example.demo.service.dto.product.CreateProductDTO;
 import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.dto.product.ProductDetailDTO;
@@ -35,6 +38,7 @@ public class ProductService {
 
 	private final IProductRepository productRepository;
 	private final ICategotyRepository categoryRepository;
+	private final IRateRepository rateRepository;
 
 	public Product findById(Long id) {
 		return productRepository.findById(id).get();
@@ -52,6 +56,15 @@ public class ProductService {
 				if (category != null) {
 					productDTO.setCategoryName(category.getName());
 				}
+				
+				Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
+	            List<Rate> rates = ratesPage.getContent();
+
+	            long totalRatings = ratesPage.getTotalElements();
+	            OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+
+	            productDTO.setTotalRatings(totalRatings);
+	            productDTO.setAverageRating(averageRating.orElse(0.0));
 
 				productDTOList.add(productDTO);
 			}
@@ -59,6 +72,25 @@ public class ProductService {
 
 		return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
 	}
+	
+	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
+		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
+
+		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				}).collect(Collectors.toList());
+
+		Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
+
+		return productDTOPage;
+	}
+
 
 	public Page<ProductDTO> getAllProduct(Pageable pageable) {
 	    Page<Product> productPage = this.productRepository.findAll(pageable);
@@ -200,24 +232,6 @@ public class ProductService {
 
 	public Page<ProductDTO> searchProductsByName(String productName, Pageable pageable) {
 		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
-
-		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
-				.map(product -> {
-					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
-					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-					if (category != null) {
-						productDTO.setCategoryName(category.getName());
-					}
-					return productDTO;
-				}).collect(Collectors.toList());
-
-		Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
-
-		return productDTOPage;
-	}
-
-	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
-		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
 		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
 				.map(product -> {

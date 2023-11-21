@@ -29,4 +29,8 @@ public class ProductDTO {
     private String categoryId;
 
     private String categoryName;
+    
+    private Long totalRatings;
+
+    private Double averageRating;
 }
