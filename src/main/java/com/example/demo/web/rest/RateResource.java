@@ -37,6 +37,12 @@ public class RateResource {
         return ResponseDTO.success(this.rateService.getAllRate(pageable));
     }
 	
+	@GetMapping("/get-rate")
+	@ApiOperation(value = "Lấy thông tin đánh giá")
+	public ResponseDTO loadRateById(Long id) {
+		return ResponseDTO.success(this.rateService.loadRateById(id));
+	}
+	
 	@PostMapping("/save")
 	@ApiOperation(value = "Tạo đánh giá")
 	public ResponseDTO createRate(@Validated @ModelAttribute CreateRateDTO rate,
