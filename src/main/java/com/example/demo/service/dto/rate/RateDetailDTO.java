@@ -2,25 +2,23 @@ package com.example.demo.service.dto.rate;
 
 import java.util.Date;
 
-
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class RateDTO {
-	
+public class RateDetailDTO {
 	private Long id;
 
     private Long productId;
     	
     private String productName;
+    
+    private String productImage;
 
     private Long accountId;
     
@@ -36,5 +34,4 @@ public class RateDTO {
     private String comment;
     
     private String image;
-
 }

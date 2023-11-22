@@ -23,9 +23,11 @@ import com.example.demo.repository.IAccountRepository;
 import com.example.demo.repository.IProductRepository;
 import com.example.demo.repository.IRateRepository;
 import com.example.demo.service.dto.product.ProductDTO;
+import com.example.demo.service.dto.product.ProductDetailDTO;
 import com.example.demo.service.dto.product.UpdateProductDTO;
 import com.example.demo.service.dto.rate.CreateRateDTO;
 import com.example.demo.service.dto.rate.RateDTO;
+import com.example.demo.service.dto.rate.RateDetailDTO;
 import com.example.demo.service.dto.rate.UpdateRateDTO;
 import com.example.demo.service.mapper.MapperUtils;
 
@@ -39,9 +41,46 @@ public class RateService {
 	private final IAccountRepository accountRepository;
 
 	public Page<RateDTO> getAllRate(Pageable pageable) {
-		Page<RateDTO> rates = MapperUtils.mapEntityPageIntoDtoPage(this.rateRepository.findAll(pageable),
-				RateDTO.class);
-		return rates;
+	    Page<RateDTO> rates = MapperUtils.mapEntityPageIntoDtoPage(
+	        this.rateRepository.findAll(pageable).map(rate -> {
+	            Account account = accountRepository.findById(rate.getAccountId()).orElse(null);
+	            Product product = productRepository.findById(rate.getProductId()).orElse(null);
+	            return RateDTO.builder()
+	                .id(rate.getId())
+	                .productId(rate.getProductId())
+	                .accountId(rate.getAccountId())
+	                .productName(product != null ? product.getProductName() : null)
+	                .accountName(account != null ? account.getUsername() : null)
+	                .accountImage(account != null ? account.getAvatar() : null)
+	                .rateDate(rate.getRateDate())
+	                .star(rate.getStar())
+	                .comment(rate.getComment())
+	                .image(rate.getImage())
+	                .build();
+	        }),
+	        RateDTO.class);
+
+	    return rates;
+	}
+	
+	public RateDetailDTO loadRateById(Long id) {
+		Rate rate = this.rateRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá"));
+		Account account = this.accountRepository.findById(rate.getAccountId()).orElse(null);
+		Product product = this.productRepository.findById(rate.getProductId()).orElse(null);
+
+		RateDetailDTO rateDetailDTO = MapperUtils.map(rate, RateDetailDTO.class);
+
+		if (account != null) {
+			rateDetailDTO.setAccountName(account.getUsername());
+			rateDetailDTO.setAccountImage(account.getAvatar());
+		}
+		if(product != null) {
+			rateDetailDTO.setProductName(product.getProductName());
+			rateDetailDTO.setProductImage(product.getImage());
+		}
+
+		return rateDetailDTO;
 	}
 
 	public RateDTO createRate(CreateRateDTO rate, MultipartFile rateFile) {
@@ -97,10 +136,12 @@ public class RateService {
         Page<RateDTO> rates = MapperUtils.mapEntityPageIntoDtoPage(
                 this.rateRepository.findByProductId(productId, pageable).map(rate -> {
                     Account account = accountRepository.findById(rate.getAccountId()).orElse(null);
+                    Product product = productRepository.findById(rate.getProductId()).orElse(null);
                     return RateDTO.builder()
                             .id(rate.getId())
                             .productId(rate.getProductId())
                             .accountId(rate.getAccountId())
+                            .productName(product != null ? product.getProductName(): null)
                             .accountName(account != null ? account.getUsername() : null)
                             .accountImage(account !=null ? account.getAvatar() : null)
                             .rateDate(rate.getRateDate())
