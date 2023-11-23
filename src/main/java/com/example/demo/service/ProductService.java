@@ -19,15 +19,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.config.exception.common.NotFoundException;
+import com.example.demo.domain.BillDetail;
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Product;
 import com.example.demo.domain.Rate;
 import com.example.demo.repository.ICategotyRepository;
+import com.example.demo.repository.IOrderDetailRepository;
 import com.example.demo.repository.IProductRepository;
 import com.example.demo.repository.IRateRepository;
+import com.example.demo.service.dto.category.CategoryStatisticDTO;
 import com.example.demo.service.dto.product.CreateProductDTO;
 import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.dto.product.ProductDetailDTO;
+import com.example.demo.service.dto.product.StatisticProductDTO;
 import com.example.demo.service.dto.product.UpdateProductDTO;
 import com.example.demo.service.dto.product.UpdateProductStatusDTO;
 import com.example.demo.service.mapper.MapperUtils;
@@ -39,6 +43,7 @@ public class ProductService {
 	private final IProductRepository productRepository;
 	private final ICategotyRepository categoryRepository;
 	private final IRateRepository rateRepository;
+	private final IOrderDetailRepository orderDetailReponsitory;
 
 	public Product findById(Long id) {
 		return productRepository.findById(id).get();
@@ -56,15 +61,15 @@ public class ProductService {
 				if (category != null) {
 					productDTO.setCategoryName(category.getName());
 				}
-				
+
 				Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
-	            List<Rate> rates = ratesPage.getContent();
+				List<Rate> rates = ratesPage.getContent();
 
-	            long totalRatings = ratesPage.getTotalElements();
-	            OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+				long totalRatings = ratesPage.getTotalElements();
+				OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
 
-	            productDTO.setTotalRatings(totalRatings);
-	            productDTO.setAverageRating(averageRating.orElse(0.0));
+				productDTO.setTotalRatings(totalRatings);
+				productDTO.setAverageRating(averageRating.orElse(0.0));
 
 				productDTOList.add(productDTO);
 			}
@@ -72,7 +77,7 @@ public class ProductService {
 
 		return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
 	}
-	
+
 	public Page<ProductDTO> showProductsByCategory(Long categoryId, Pageable pageable) {
 		Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
@@ -91,26 +96,25 @@ public class ProductService {
 		return productDTOPage;
 	}
 
-
 	public Page<ProductDTO> getAllProduct(Pageable pageable) {
-	    Page<Product> productPage = this.productRepository.findAll(pageable);
-	    List<ProductDTO> productDTOList = new ArrayList<>();
+		Page<Product> productPage = this.productRepository.findAll(pageable);
+		List<ProductDTO> productDTOList = new ArrayList<>();
 
-	    for (Product product : productPage.getContent()) {
-	        Category category = this.categoryRepository.findById(product.getCategoryId()).orElse(null);
+		for (Product product : productPage.getContent()) {
+			Category category = this.categoryRepository.findById(product.getCategoryId()).orElse(null);
 
-	        if (category == null || category.getIsActive()) {
-	            ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+			if (category == null || category.getIsActive()) {
+				ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 
-	            if (category != null) {
-	                productDTO.setCategoryName(category.getName());
-	            }
+				if (category != null) {
+					productDTO.setCategoryName(category.getName());
+				}
 
-	            productDTOList.add(productDTO);
-	        }
-	    }
+				productDTOList.add(productDTO);
+			}
+		}
 
-	    return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
+		return new PageImpl<>(productDTOList, pageable, productPage.getTotalElements());
 	}
 
 	public ProductDetailDTO loadProductById(Long id) {
@@ -260,9 +264,60 @@ public class ProductService {
 
 		return productDTO;
 	}
-	
+
 	public int generateRandomNumber(int min, int max) {
-	    return (int) (Math.random() * (max - min + 1) + min);
+		return (int) (Math.random() * (max - min + 1) + min);
+	}
+	
+	
+
+	public long getTotalProducts() {
+		return productRepository.count();
+	}
+
+	public int getQtyProduct(){
+        List<Product> product = productRepository.findAll();
+        List<BillDetail> bill = orderDetailReponsitory.findAll();
+        int QtyProduct = 0;
+        int QtyBillDetail = 0;
+        for (Product pro: product
+             ) {
+            QtyProduct += pro.getQuantity();
+        }
+        for (BillDetail billDetail: bill
+             ) {
+            QtyBillDetail += billDetail.getQuantity();
+        }
+        return QtyProduct-QtyBillDetail;
+    }
+	
+	public StatisticProductDTO statisticProduct() {
+	    StatisticProductDTO statistic = new StatisticProductDTO();
+	    List<CategoryStatisticDTO> categoryStatistics = new ArrayList<>();
+
+	    // Get all active categories
+	    List<Category> activeCategories = this.categoryRepository.findByIsActive(true);
+
+	    for (Category category : activeCategories) {
+	        CategoryStatisticDTO categoryStatistic = new CategoryStatisticDTO();
+	        categoryStatistic.setCategoryName(category.getName());
+
+	        // Get all active products for the current category
+	        List<Product> productsInCategory = this.productRepository.findByCategoryIdAndIsActive(category.getId(), true);
+
+	        // Calculate total quantity of active products in the current category
+	        int qtyProductInCategory = productsInCategory.stream().mapToInt(product -> product.getQuantity().intValue()).sum();
+
+	        // Set values in the CategoryStatisticDTO object
+	        categoryStatistic.setTotalProduct(productsInCategory.size());
+	        categoryStatistic.setTotalStockQuantity(qtyProductInCategory);
+
+	        categoryStatistics.add(categoryStatistic);
+	    }
+
+	    statistic.setCategoryStatistics(categoryStatistics);
+
+	    return statistic;
 	}
 
 }
