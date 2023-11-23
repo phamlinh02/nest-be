@@ -413,6 +413,10 @@ public class AccountService {
 	    return (int) (Math.random() * (max - min + 1) + min);
 	}
 	
+	public long countActiveAccounts() {
+        return accountRepository.count();
+    }
+	
 	
 }
 

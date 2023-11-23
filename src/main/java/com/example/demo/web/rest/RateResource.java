@@ -69,5 +69,10 @@ public class RateResource {
         return ResponseDTO.success("Xóa đánh giá thành công");
     }
 	
+	@GetMapping("/get-statistics")
+	@ApiOperation(value = "Lấy thống kê đánh giá theo sản phẩm")
+	public ResponseDTO getRateStatistics(Pageable pageable) {
+	    return ResponseDTO.success(this.rateService.getRateStatistics());
+	}
 	
 }

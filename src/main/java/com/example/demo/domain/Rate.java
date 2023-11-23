@@ -21,7 +21,7 @@ public class Rate {
 
     private Long accountId;
     
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date rateDate;
 
     private Integer star;

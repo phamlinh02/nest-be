@@ -98,5 +98,11 @@ public class AccountResource {
         return ResponseDTO.success(this.accountService.getCurrentUser(token));
     }
 	
+	@GetMapping("/get-count-user")
+    @ApiOperation(value = "Đếm tài khoản người dùng hiện tại")
+    public ResponseDTO getCountInactiveAccounts() {
+        return ResponseDTO.success(this.accountService.countActiveAccounts());
+        
+    }
 		 	
 }

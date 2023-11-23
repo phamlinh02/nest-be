@@ -28,6 +28,7 @@ import com.example.demo.service.dto.product.UpdateProductDTO;
 import com.example.demo.service.dto.rate.CreateRateDTO;
 import com.example.demo.service.dto.rate.RateDTO;
 import com.example.demo.service.dto.rate.RateDetailDTO;
+import com.example.demo.service.dto.rate.RateStatisticsDTO;
 import com.example.demo.service.dto.rate.UpdateRateDTO;
 import com.example.demo.service.mapper.MapperUtils;
 
@@ -161,5 +162,40 @@ public class RateService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá"));
 
         this.rateRepository.delete(rate);
+    }
+	
+	public RateStatisticsDTO getRateStatistics() {
+	    List<Rate> rates = rateRepository.findAll();
+
+	    int totalRates = (int) rateRepository.count(); // Total count without pagination
+	    double averageStar = calculateAverageStar(rates);
+	    int fiveStarCount = countRatesByStar(rates, 5);
+	    int fourStarCount = countRatesByStar(rates, 4);
+	    int threeStarCount = countRatesByStar(rates, 3);
+	    int twoStarCount = countRatesByStar(rates, 2);
+	    int oneStarCount = countRatesByStar(rates, 1);
+
+	    return new RateStatisticsDTO(
+	        totalRates,
+	        averageStar,
+	        fiveStarCount,
+	        fourStarCount,
+	        threeStarCount,
+	        twoStarCount,
+	        oneStarCount
+	    );
+	}
+	
+	private double calculateAverageStar(List<Rate> rates) {
+        if (rates.isEmpty()) {
+            return 0.0;
+        }
+
+        int totalStars = rates.stream().mapToInt(Rate::getStar).sum();
+        return (double) totalStars / rates.size();
+    }
+
+    private int countRatesByStar(List<Rate> rates, int star) {
+        return (int) rates.stream().filter(rate -> rate.getStar() == star).count();
     }
 }
