@@ -21,7 +21,7 @@ public class CreateRateDTO {
 
     private Integer star;
     
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date rateDate;
 
     private String comment;
