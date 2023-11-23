@@ -80,4 +80,11 @@ public class ProductResource {
 	public ResponseDTO updateProductStatus(@RequestBody UpdateProductStatusDTO updateStatusDTO) {
 	    return ResponseDTO.success(this.productService.updateProductStatus(updateStatusDTO));
 	}
+	
+	@GetMapping("/statistic-product")
+	@ApiOperation(value = "Thống kê số lượng sản phẩm")
+	public ResponseDTO statisticProduct() {
+		return ResponseDTO.success(this.productService.statisticProduct());
+	}
+
 }
