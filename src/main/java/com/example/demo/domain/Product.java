@@ -50,8 +50,14 @@ public class Product implements Serializable {
 
 	private Long categoryId;
 
+	@Column(name = "search_count")
+	private Long searchCount = 0L;
+
 	public Product(Long id){
 		this.id = id;
+	}
+	public void incrementSearchCount() {
+		this.searchCount++;
 	}
 
 }

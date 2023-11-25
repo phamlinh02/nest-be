@@ -80,4 +80,10 @@ public class ProductResource {
 	public ResponseDTO updateProductStatus(@RequestBody UpdateProductStatusDTO updateStatusDTO) {
 	    return ResponseDTO.success(this.productService.updateProductStatus(updateStatusDTO));
 	}
+
+	@GetMapping("/get-most-searched-products")
+	@ApiOperation(value = "Lấy danh sách sản phẩm có số lượt tìm kiếm nhiều nhất")
+	public ResponseDTO getMostSearchedProducts(@RequestParam int limit) {
+		return ResponseDTO.success(this.productService.getMostSearchedProducts(3));
+	}
 }

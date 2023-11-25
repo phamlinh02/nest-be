@@ -11,7 +11,8 @@ import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CartItemImpl implements CartItemService {
@@ -78,6 +79,25 @@ public class CartItemImpl implements CartItemService {
         cartItemReponse.saveAll(existingCartItems);
     }
 
+    @Override
+    public List<Product> getTopProductsAcrossAccounts(int limit) {
+        List<CartItem> allCartItems = cartItemReponse.findAll();
 
+        // Group cart items by product and sum the quantities
+        Map<Product, Long> productQuantities = allCartItems.stream()
+                .collect(Collectors.groupingBy(CartItem::getProductId,
+                        Collectors.summingLong(CartItem::getQuantity)));
+
+        // Sort products by total quantity in descending order
+        List<Product> sortedProducts = productQuantities.entrySet().stream()
+                .sorted(Map.Entry.<Product, Long>comparingByValue().reversed())
+                .limit(limit)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        return sortedProducts;
+    }
 }
+
+
 

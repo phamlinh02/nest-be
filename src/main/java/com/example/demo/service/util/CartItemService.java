@@ -1,6 +1,8 @@
 package com.example.demo.service.util;
 
 import com.example.demo.domain.CartItem;
+import com.example.demo.domain.Product;
+import com.example.demo.service.dto.product.ProductDTO;
 
 import java.util.List;
 
@@ -15,6 +17,5 @@ public interface CartItemService {
 
     public void updateCartItems(Long accountId, List<CartItem> cartItems);
 
-
-
+    List<Product> getTopProductsAcrossAccounts(int limit);
 }
