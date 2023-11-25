@@ -203,10 +203,10 @@ public class ProductService {
 		// Lấy danh sách sản phẩm và thực hiện các xử lý khác
 		List<ProductDTO> productDTOs = productPage.getContent().stream()
 				.map(product -> {
-//					// Tăng số lần tìm kiếm của sản phẩm
-//					product.incrementSearchCount();
-//					// Lưu lại sản phẩm với số lần tìm kiếm đã được cập nhật
-//					productRepository.save(product);
+					// Tăng số lần tìm kiếm của sản phẩm
+					product.incrementSearchCount();
+					// Lưu lại sản phẩm với số lần tìm kiếm đã được cập nhật
+					productRepository.save(product);
 
 					// Tiếp tục xử lý khác và tạo đối tượng ProductDTO
 					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
