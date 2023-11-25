@@ -8,12 +8,6 @@ import com.example.demo.domain.Account;
 import com.example.demo.domain.Bill;
 import com.example.demo.domain.BillDetail;
 import com.example.demo.domain.Product;
-<<<<<<< HEAD
-import com.example.demo.repository.IOrderDetailRepository;
-import com.example.demo.repository.IOrderRepository;
-import com.example.demo.repository.IProductRepository;
-import com.example.demo.service.dto.order.BillDTO;
-=======
 import com.example.demo.repository.IAccountRepository;
 import com.example.demo.repository.IOrderDetailRepository;
 import com.example.demo.repository.IOrderRepository;
@@ -22,25 +16,17 @@ import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.account.AccountDTO;
 import com.example.demo.service.dto.order.*;
 import com.example.demo.service.dto.product.ProductDTO;
->>>>>>> 392f61fde1bee39e403c7f3758cc5c1cf2cf47fb
 import com.example.demo.service.mapper.MapperUtils;
 import com.example.demo.service.util.DataUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-=======
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
->>>>>>> 392f61fde1bee39e403c7f3758cc5c1cf2cf47fb
 
 @Service
 public class OrderService {
@@ -50,17 +36,9 @@ public class OrderService {
     private final IOrderDetailRepository iOrderDetailRepository;
     private final IProductRepository productRepository;
 
-    private final IProductRepository iProductReponsitory;
-
     public OrderService(
             IOrderRepository iOrderRepository,
             IOrderDetailRepository iOrderDetailRepository,
-<<<<<<< HEAD
-            IProductRepository iProductReponsitory) {
-        this.iOrderDetailRepository = iOrderDetailRepository;
-        this.iOrderRepository = iOrderRepository;
-        this.iProductReponsitory = iProductReponsitory;
-=======
             IAccountRepository accountRepository,
             IProductRepository productRepository
     ) {
@@ -68,7 +46,6 @@ public class OrderService {
         this.iOrderRepository = iOrderRepository;
         this.accountRepository = accountRepository;
         this.productRepository = productRepository;
->>>>>>> 392f61fde1bee39e403c7f3758cc5c1cf2cf47fb
     }
 
     public Page<BillDTO> getAllOrder(Pageable pageable, BillDTO billDTO) {
@@ -161,7 +138,7 @@ public class OrderService {
 
                     // Fetch additional details from your Product entity based on the ID
                     // Replace with actual logic to retrieve Product by ID
-                    Optional<Product> productDetails = iProductReponsitory.findById(entry.getKey());
+                    Optional<Product> productDetails = productRepository.findById(entry.getKey());
                     product.setId(productDetails.get().getId());
                     product.setProductName(productDetails.get().getProductName());
                     product.setDescription(productDetails.get().getDescription());

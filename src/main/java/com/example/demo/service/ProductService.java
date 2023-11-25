@@ -332,14 +332,14 @@ public class ProductService {
 		return productDTO;
 	}
 
-	public List<ProductDTO> getMostSearchedProducts(int limit) {
-		// Sắp xếp sản phẩm theo số lần tìm kiếm giảm dần và giới hạn số lượng sản phẩm
-		List<Product> mostSearchedProducts = productRepository.findAll(
-						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "searchCount")))
+	public List<ProductDTO> getRecentlyAddedProducts(int limit) {
+		// Retrieve recently added products sorted by creation date in descending order
+		List<Product> recentlyAddedProducts = productRepository.findAll(
+						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
 				.getContent();
 
-		// Ánh xạ danh sách sản phẩm sang danh sách DTO
-		List<ProductDTO> mostSearchedProductDTOs = mostSearchedProducts.stream()
+		// Map the recently added products to DTOs
+		List<ProductDTO> recentlyAddedProductDTOs = recentlyAddedProducts.stream()
 				.map(product -> {
 					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
@@ -347,9 +347,10 @@ public class ProductService {
 						productDTO.setCategoryName(category.getName());
 					}
 					return productDTO;
-				}).collect(Collectors.toList());
+				})
+				.collect(Collectors.toList());
 
-		return mostSearchedProductDTOs;
+		return recentlyAddedProductDTOs;
 	}
 
 }

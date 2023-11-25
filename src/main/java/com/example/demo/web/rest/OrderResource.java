@@ -17,11 +17,7 @@ public class OrderResource {
 
     private final OrderService orderService;
 
-<<<<<<< HEAD
     OrderResource(OrderService orderService){
-=======
-    OrderResource(OrderService orderService) {
->>>>>>> 392f61fde1bee39e403c7f3758cc5c1cf2cf47fb
         this.orderService = orderService;
     }
 
@@ -49,8 +45,8 @@ public class OrderResource {
         return ResponseDTO.success();
     }
 
-    @GetMapping("/list/selling")
-    public ResponseDTO getTop10ProductPopular(){
+    @GetMapping("/selling")
+    public ResponseDTO getTopSellingProducts(){
         try {
             List<Product> order = orderService.getTopSellingProducts(3);
             return ResponseDTO.success(order);
