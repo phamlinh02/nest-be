@@ -80,10 +80,20 @@ public class ProductResource {
 	public ResponseDTO updateProductStatus(@RequestBody UpdateProductStatusDTO updateStatusDTO) {
 	    return ResponseDTO.success(this.productService.updateProductStatus(updateStatusDTO));
 	}
+<<<<<<< HEAD
 
 	@GetMapping("/get-most-searched-products")
 	@ApiOperation(value = "Lấy danh sách sản phẩm có số lượt tìm kiếm nhiều nhất")
 	public ResponseDTO getMostSearchedProducts(@RequestParam int limit) {
 		return ResponseDTO.success(this.productService.getMostSearchedProducts(3));
 	}
+=======
+	
+	@GetMapping("/statistic-product")
+	@ApiOperation(value = "Thống kê số lượng sản phẩm")
+	public ResponseDTO statisticProduct() {
+		return ResponseDTO.success(this.productService.statisticProduct());
+	}
+
+>>>>>>> 392f61fde1bee39e403c7f3758cc5c1cf2cf47fb
 }

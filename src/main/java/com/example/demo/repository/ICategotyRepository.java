@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +18,7 @@ public interface ICategotyRepository extends JpaRepository<Category, Long>{
 	
 	//Show category list using IsActive
 	Page<Category> findByIsActiveTrue(Pageable pageable);
+	
+	List<Category> findByIsActive(Boolean isActive);
 	
 }

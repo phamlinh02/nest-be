@@ -7,15 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDTO {
-	private Long id;
-	
-	private String name;
-	
-	private String imageCategory;
-    
-    private Boolean isActive;
-    
-    private Long productCount;
-    
+public class CategoryStatisticDTO {
+	private String categoryName;
+	private long totalProduct;
+	private long totalStockQuantity;
 }

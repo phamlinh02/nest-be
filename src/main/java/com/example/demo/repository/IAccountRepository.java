@@ -15,5 +15,10 @@ public interface IAccountRepository extends JpaRepository<Account, Long>{
 	
 	//Check if the username already exists or not
     Boolean existsByUsername(String username);
+    
+    Account findByEmail(String email);
+    
+    Boolean existsByEmail(String email);
+    
 
 }

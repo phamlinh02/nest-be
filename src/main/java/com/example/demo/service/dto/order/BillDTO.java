@@ -30,10 +30,14 @@ public class BillDTO {
     private String reasonDeny;
     private Long countOrder;
     private BigDecimal sumPriceBill;
+    private String email;
+    private String username;
+    private String fullName;
 
 
 //    getAllOrder
-    BillDTO(Long id, Date orderDate, String status, String description, String reasonDeny, Long countOrder, BigDecimal sumPriceBill){
+    BillDTO(Long id, Date orderDate, String status, String description, String reasonDeny,
+            Long countOrder, BigDecimal sumPriceBill, String email, String username, String fullName){
         this.id = id;
         this.orderDate = orderDate;
         this.status = Constant.BILL_STATUS.valueOf(status);
@@ -41,5 +45,8 @@ public class BillDTO {
         this.reasonDeny = reasonDeny;
         this.countOrder = countOrder;
         this.sumPriceBill = sumPriceBill;
+        this.email = email;
+        this.username = username;
+        this.fullName = fullName;
     }
 }

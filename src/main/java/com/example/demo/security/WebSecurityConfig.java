@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.client.RestTemplate;
+
 import com.example.demo.security.jwt.AuthEntryPointJwt;
 import com.example.demo.service.util.serviceImpl.AccountDetailsServiceImpl;
 
@@ -22,15 +24,15 @@ public class WebSecurityConfig {
 
 	private final AccountDetailsServiceImpl accountDetailsService;
 	private final AuthEntryPointJwt unauthorizedHandler;
-
 	
 	
 	public WebSecurityConfig(AccountDetailsServiceImpl accountDetailsService, AuthEntryPointJwt unauthorizedHandler) {
 		super();
 		this.accountDetailsService = accountDetailsService;
 		this.unauthorizedHandler = unauthorizedHandler;
+		
 	}
-
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -44,20 +46,17 @@ public class WebSecurityConfig {
 
 	    return authenticationProvider;
 	}
-	
 
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-		.authorizeRequests()
-		.requestMatchers("/**")
-		.permitAll().anyRequest()
-		.authenticated()
-		.and()
-		.formLogin().disable()
-		.logout()
-		.permitAll();
+		http.csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+        		.requestMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+         );
 		http.authenticationProvider(customAuthenticationProvider());
 		return http.build();
 	}
+	
 }
