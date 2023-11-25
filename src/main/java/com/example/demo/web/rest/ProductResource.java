@@ -2,6 +2,7 @@ package com.example.demo.web.rest;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -86,6 +87,7 @@ public class ProductResource {
 	public ResponseDTO statisticProduct() {
 		return ResponseDTO.success(this.productService.statisticProduct());
 	}
+	
 
 	@GetMapping("/get-recently-added")
 	@ApiOperation(value = "Lấy danh sách sản phẩm mới được thêm vào gần đây")
