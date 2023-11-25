@@ -319,5 +319,4 @@ public class ProductService {
 
 	    return statistic;
 	}
-
 }
