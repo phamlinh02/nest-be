@@ -41,4 +41,12 @@ public class OrderResource {
         this.orderService.createBill(cart);
         return ResponseDTO.success();
     }
+    @GetMapping("/statistics")
+    public ResponseDTO statisticsBill() {
+        return ResponseDTO.success(this.orderService.getStatisticsBill());
+    }
+    @GetMapping("/order-bill")
+    public ResponseDTO getOrderBill() {
+        return ResponseDTO.success(this.orderService.getListBill());
+    }
 }

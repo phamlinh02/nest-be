@@ -1,49 +1,56 @@
 package com.example.demo.service;
 
 import com.example.demo.config.Constant;
-import com.example.demo.config.exception.common.NotComparePriceException;
 import com.example.demo.config.exception.common.NotEnoughException;
 import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Bill;
 import com.example.demo.domain.BillDetail;
 import com.example.demo.domain.Product;
-import com.example.demo.repository.IAccountRepository;
-import com.example.demo.repository.IOrderDetailRepository;
-import com.example.demo.repository.IOrderRepository;
-import com.example.demo.repository.IProductRepository;
-import com.example.demo.service.dto.ResponseDTO;
+import com.example.demo.repository.*;
 import com.example.demo.service.dto.account.AccountDTO;
-import com.example.demo.service.dto.order.*;
+import com.example.demo.service.dto.order.BillDTO;
+import com.example.demo.service.dto.order.BillDetailDTO;
+import com.example.demo.service.dto.order.StatisticsBillDTO;
+import com.example.demo.service.dto.order.ViewBillDetail;
 import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.mapper.MapperUtils;
+import com.example.demo.service.util.CartItemService;
 import com.example.demo.service.util.DataUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderService {
 
+    @Autowired
     private final IOrderRepository iOrderRepository;
     private final IAccountRepository accountRepository;
     private final IOrderDetailRepository iOrderDetailRepository;
     private final IProductRepository productRepository;
+    private final ICartItemRepository cartItemRepository;
+    private final CartItemService cartItemService;
 
     public OrderService(
             IOrderRepository iOrderRepository,
             IOrderDetailRepository iOrderDetailRepository,
             IAccountRepository accountRepository,
-            IProductRepository productRepository
+            IProductRepository productRepository,
+            ICartItemRepository iCartItemRepository,
+            CartItemService cartItemService
     ) {
         this.iOrderDetailRepository = iOrderDetailRepository;
         this.iOrderRepository = iOrderRepository;
         this.accountRepository = accountRepository;
         this.productRepository = productRepository;
+        this.cartItemRepository = iCartItemRepository;
+        this.cartItemService = cartItemService;
+
     }
 
     public Page<BillDTO> getAllOrder(Pageable pageable, BillDTO billDTO) {
@@ -98,6 +105,8 @@ public class OrderService {
             detail.setPrice(product.getPrice());
             this.iOrderDetailRepository.save(MapperUtils.map(detail, BillDetail.class));
         });
+
+        this.cartItemService.remove(bill.getAccountId());
     }
 
     public ViewBillDetail getBillDetail(Long billID) {
@@ -115,6 +124,27 @@ public class OrderService {
         });
         result.setBillDetails(list);
         return result;
+    }
+
+    public StatisticsBillDTO getStatisticsBill() {
+
+        return StatisticsBillDTO.builder().totalBill(
+                        MapperUtils.mapList(this.iOrderRepository.findAllByOrderByOrderDateDesc(), BillDTO.class)
+                )
+                .completeBill(
+                        MapperUtils.mapList(this.iOrderRepository.findAllByStatusEqualsOrderByOrderDate(Constant.BILL_STATUS.COMPLETED), BillDTO.class)
+                )
+                .newBill(
+                        MapperUtils.mapList(this.iOrderRepository.findAllByStatusEqualsOrderByOrderDate(Constant.BILL_STATUS.NEW), BillDTO.class)
+                ).cancelBill(
+                        MapperUtils.mapList(this.iOrderRepository.findAllByStatusEqualsOrderByOrderDate(Constant.BILL_STATUS.CANCELLED), BillDTO.class)
+                )
+                .build();
+
+    }
+
+    public List<BillDTO> getListBill(){
+        return MapperUtils.mapList(this.iOrderRepository.findAllByOrderByOrderDateDesc(), BillDTO.class);
     }
 
 }
