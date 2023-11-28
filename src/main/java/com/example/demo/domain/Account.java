@@ -40,5 +40,7 @@ public class Account {
 
     @Column(length = 255)
     private String avatar;
+    
+    private Boolean isActive;
 
 }

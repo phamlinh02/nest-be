@@ -23,4 +23,5 @@ public class UpdateAccountDTO {
     private MultipartFile avatar;
     @Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
+    private Boolean isActive;
 }

@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Bill;
 import com.example.demo.domain.BillDetail;
+import com.example.demo.domain.Category;
 import com.example.demo.domain.Product;
+import com.example.demo.repository.ICategotyRepository;
 import com.example.demo.repository.IOrderDetailRepository;
 import com.example.demo.repository.IOrderRepository;
 import com.example.demo.repository.IProductRepository;
@@ -24,6 +26,8 @@ public class ReportService {
     IOrderDetailRepository orderDetailReponsitory;
     @Autowired
     IOrderRepository orderReponsityory;
+    @Autowired
+    ICategotyRepository categoryRepository;
 
     public int getQtyProduct(){
         List<Product> product = productReponsitory.findAll();

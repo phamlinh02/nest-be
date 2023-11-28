@@ -36,6 +36,8 @@ public class AccountDetailDTO extends SharedAuditingEntity{
 
     private String avatar;
     
+    private Boolean isActive;
+    
     @Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
     

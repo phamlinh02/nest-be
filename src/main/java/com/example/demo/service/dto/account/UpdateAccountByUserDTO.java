@@ -19,4 +19,5 @@ public class UpdateAccountByUserDTO {
     private String address;
     private String phone;
     private MultipartFile avatar;
+    private Boolean isActive;
 }

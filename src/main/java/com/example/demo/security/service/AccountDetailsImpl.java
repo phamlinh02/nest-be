@@ -28,11 +28,12 @@ public class AccountDetailsImpl implements UserDetails{
     private String address;
     private String phone;
     private String avatar;
+    private Boolean isActive;
     @JsonIgnore
     private String password;
     private Constant.ROLE_USER roleName;
 
-    public AccountDetailsImpl(Long id, String username,String password, String email, String fullName, String address, String phone, String avatar, Constant.ROLE_USER roleName) {
+    public AccountDetailsImpl(Long id, String username,String password, String email, String fullName, String address, String phone, String avatar, Constant.ROLE_USER roleName,Boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -42,6 +43,7 @@ public class AccountDetailsImpl implements UserDetails{
         this.phone = phone;
         this.avatar = avatar;
         this.roleName = roleName;
+        this.isActive = isActive;
     }
 
     public static AccountDetailsImpl build(Account user, IAuthorityRepository authorityRepository, IRoleRepository roleRepository) {
@@ -62,7 +64,8 @@ public class AccountDetailsImpl implements UserDetails{
                     user.getAddress(),
                     user.getPhone(),
                     user.getAvatar(),
-                    roleName
+                    roleName,
+                    user.getIsActive()
                 );
             }
         }
@@ -76,7 +79,8 @@ public class AccountDetailsImpl implements UserDetails{
             user.getAddress(),
             user.getPhone(),
             user.getAvatar(),
-            null
+            null,
+            user.getIsActive()
         );
     }
 
@@ -103,8 +107,12 @@ public class AccountDetailsImpl implements UserDetails{
     public String getAvatar() {
         return avatar;
     }
-    
-    public Constant.ROLE_USER getRoleName() {
+     
+    public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public Constant.ROLE_USER getRoleName() {
 		return roleName;
 	}
 
