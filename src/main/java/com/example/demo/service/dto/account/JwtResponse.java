@@ -21,7 +21,7 @@ public class JwtResponse {
 	private String address;
 	private String phone;
 	private String avatar;
-
 	@Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
+	private Boolean isActive;
 }

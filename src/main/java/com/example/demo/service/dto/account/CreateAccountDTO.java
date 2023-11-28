@@ -37,6 +37,8 @@ public class CreateAccountDTO {
 	@Pattern(regexp = "^[0-9]{1,12}$", message = "Số điện thoại không đúng định dạng" )
 	private String phone;
 	
+	private Boolean isActive;
+	
 	private MultipartFile avatar;
 	
 	@Enumerated(EnumType.STRING)

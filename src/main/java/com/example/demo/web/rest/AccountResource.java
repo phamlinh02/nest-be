@@ -15,6 +15,8 @@ import com.example.demo.service.dto.account.ForgetPassDTO;
 import com.example.demo.service.dto.account.PayloadLogin;
 import com.example.demo.service.dto.account.UpdateAccountByUserDTO;
 import com.example.demo.service.dto.account.UpdateAccountDTO;
+import com.example.demo.service.dto.account.UpdateStatusAccountDTO;
+import com.example.demo.service.dto.product.UpdateProductStatusDTO;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -104,5 +106,11 @@ public class AccountResource {
         return ResponseDTO.success(this.accountService.countActiveAccounts());
         
     }
+	
+	@PostMapping("/update-status")
+	@ApiOperation(value = "Cập nhật trạng thái sản phẩm")
+	public ResponseDTO updateAccountStatus(@RequestBody UpdateStatusAccountDTO updateStatusDTO) {
+	    return ResponseDTO.success(this.accountService.updateAccountStatus(updateStatusDTO));
+	}
 		 	
 }

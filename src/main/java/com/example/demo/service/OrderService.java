@@ -146,5 +146,9 @@ public class OrderService {
     public List<BillDTO> getListBill(){
         return MapperUtils.mapList(this.iOrderRepository.findAllByOrderByOrderDateDesc(), BillDTO.class);
     }
+    
+    public void saveEntity(BillDTO bill) {
+    	this.iOrderRepository.save(MapperUtils.map(bill, Bill.class));
+    }
 
 }

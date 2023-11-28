@@ -31,6 +31,14 @@ public class OrderResource {
         return ResponseDTO.success(this.orderService.updateBill(dto));
     }
 
+
+    @PostMapping("/save")
+    public ResponseDTO saveBill(@RequestBody BillDTO dto) {
+    	this.orderService.saveEntity(dto);
+        return ResponseDTO.success();
+    }
+
+    
     @GetMapping("/get-detail/{id}")
     public ResponseDTO getDetailBill(@PathVariable Long id) {
         return ResponseDTO.success(this.orderService.getBillDetail(id));
