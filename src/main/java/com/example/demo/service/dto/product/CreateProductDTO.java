@@ -24,6 +24,8 @@ public class CreateProductDTO {
 	private MultipartFile image;
 	
 	private Boolean isActive;
+	
+	private String endDate;
 
 	private String categoryName;
 }

@@ -41,7 +41,6 @@ public class AccountDetailDTO extends SharedAuditingEntity{
     @Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
     
-    
 
 	
 }

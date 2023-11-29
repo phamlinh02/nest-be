@@ -54,19 +54,19 @@ public class AuthorityService {
 
 		return authorities;
 	}
+	
+	@Transactional
+    public void updateAuthorityRole(Long authorityId, UpdateAuthorityDTO updateAuthorityDTO) {
+        Authority authority = authorityRepository.findById(authorityId)
+                .orElseThrow(() -> new NotFoundException("Authority not found"));
 
-	public AuthorityDTO updateAuthority(UpdateAuthorityDTO updateAuthorityDTO) {
-	    Authority authority = this.authorityRepository.findById(updateAuthorityDTO.getId())
-	            .orElseThrow(() -> new NotFoundException("Không tìm thấy authority"));
+        Long newRoleId = updateAuthorityDTO.getRoleId();
+        Role role = roleRepository.findById(newRoleId)
+                .orElseThrow(() -> new NotFoundException("Role not found"));
 
-	    Role role = this.roleRepository.findById(updateAuthorityDTO.getRoleId())
-	            .orElseThrow(() -> new NotFoundException("Không tìm thấy role"));
-	    authority.setRoleId(role.getId());
+        authority.setRoleId(newRoleId);
 
-	    Authority updatedAuthority = this.authorityRepository.save(authority);
-	    AuthorityDTO authorityDTO = MapperUtils.map(updatedAuthority, AuthorityDTO.class);
-
-	    return authorityDTO;
-	}
+        authorityRepository.save(authority);
+    }
 
 }

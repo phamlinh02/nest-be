@@ -3,6 +3,7 @@ package com.example.demo.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -17,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,12 +49,22 @@ public class Product implements Serializable {
 	@Column(length = 255)
 	private String image;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
+
 	private Boolean isActive;
 
 	private Long categoryId;
-
-	public Product(Long id){
-		this.id = id;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getEndDate() {
+	    if (endDate != null && endDate.before(new Date())) {
+	        isActive = false;
+	    } else {
+	        isActive = true;
+	    }
+	    return endDate;
 	}
+
 
 }
