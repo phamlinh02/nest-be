@@ -1,7 +1,10 @@
 package com.example.demo.service.dto.product;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +32,9 @@ public class ProductDTO {
     private String categoryId;
 
     private String categoryName;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
     
     private Long totalRatings;
 

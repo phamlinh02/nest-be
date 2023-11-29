@@ -25,6 +25,8 @@ public class ProductDetailDTO {
 	private String image;
 	
 	private Boolean isActive;
+	
+	private String endDate;
 
 	private String categoryName;
 }

@@ -144,7 +144,7 @@ public class AccountService {
 
 			accountEntity = accountRepository.save(accountEntity);
 
-			Role customerRole = roleRepository.findByRoleName(account.getRoleName());
+			Role customerRole = roleRepository.findByRoleName(Constant.ROLE_USER.ROLE_CUSTOMER);
 
 			if (customerRole == null) {
 				throw new NotFoundException("Vai trò không tồn tại");
@@ -348,22 +348,8 @@ public class AccountService {
 			account.setAvatar(oldAvatarPath);
 		}
 
-		Role role = roleRepository.findByRoleName(updateAccountDTO.getRoleName());
-
-		if (role == null) {
-			throw new NotFoundException("Không tìm thấy role");
-		}
-		authorityRepository.deleteByAccountId(account.getId());
-
-		Authority newAuthority = new Authority();
-		newAuthority.setAccountId(account.getId());
-		newAuthority.setRoleId(role.getId());
-		authorityRepository.save(newAuthority);
-
 		Account accountEntity = MapperUtils.map(account, Account.class);
 		AccountDTO accountDTO = MapperUtils.map(this.accountRepository.save(accountEntity), AccountDTO.class);
-
-		accountDTO.setRoleName(updateAccountDTO.getRoleName());
 
 		return accountDTO;
 	}

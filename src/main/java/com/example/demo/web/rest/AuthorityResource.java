@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,10 +39,14 @@ public class AuthorityResource {
         return ResponseDTO.success(this.authorityService.getAllAuthority(pageable));
     }
 	
-	@PostMapping("/update")
-    @ApiOperation(value = "Chỉnh sửa authority")
-    public ResponseDTO updateUser(@Validated @ModelAttribute UpdateAuthorityDTO authority) {
-        return ResponseDTO.success(this.authorityService.updateAuthority(authority));
+	@PostMapping("/update-role/{authorityId}")
+    @ApiOperation(value = "Cập nhật roleId của authority")
+    public ResponseDTO updateAuthorityRole(
+            @PathVariable Long authorityId,
+            @RequestBody UpdateAuthorityDTO updateAuthorityDTO) {
+        authorityService.updateAuthorityRole(authorityId, updateAuthorityDTO);
+        return ResponseDTO.success("Role of authority updated successfully");
     }
+	
 
 }

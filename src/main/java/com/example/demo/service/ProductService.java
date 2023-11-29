@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
@@ -143,6 +145,14 @@ public class ProductService {
 		}
 
 		Product productEntity = MapperUtils.map(product, Product.class);
+		if (product.getEndDate() != null) {
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	        	productEntity.setEndDate(dateFormat.parse(product.getEndDate()));
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
 		String newAvatarPath = null;
 		if (productFile != null) {
@@ -188,6 +198,14 @@ public class ProductService {
 		product.setDescription(updateProductDTO.getDescription());
 		product.setIsActive(updateProductDTO.getIsActive());
 		product.setQuantity(updateProductDTO.getQuantity());
+		if (updateProductDTO.getEndDate() != null) {
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            product.setEndDate(dateFormat.parse(updateProductDTO.getEndDate()));
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	    }
 		String newImagePath = null;
 		if (productFile != null) {
 			try {
@@ -225,6 +243,7 @@ public class ProductService {
 		}
 
 		product.setCategoryId(category.getId());
+		
 
 		Product productEntity = MapperUtils.map(product, Product.class);
 		ProductDTO productDTO = MapperUtils.map(this.productRepository.save(productEntity), ProductDTO.class);
