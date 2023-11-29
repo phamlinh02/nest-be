@@ -239,6 +239,11 @@ public class ProductService {
 		// Lấy danh sách sản phẩm và thực hiện các xử lý khác
 		List<ProductDTO> productDTOs = productPage.getContent().stream()
 				.map(product -> {
+					// Tăng số lần tìm kiếm của sản phẩm
+					product.incrementSearchCount();
+					// Lưu lại sản phẩm với số lần tìm kiếm đã được cập nhật
+					productRepository.save(product);
+
 					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
 					if (category != null) {
@@ -351,6 +356,26 @@ public class ProductService {
 				.collect(Collectors.toList());
 
 		return recentlyAddedProductDTOs;
+	}
+
+	public List<ProductDTO> getMostSearchedProducts(int limit) {
+		// Sắp xếp sản phẩm theo số lần tìm kiếm giảm dần và giới hạn số lượng sản phẩm
+		List<Product> mostSearchedProducts = productRepository.findAll(
+						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "searchCount")))
+				.getContent();
+
+		// Ánh xạ danh sách sản phẩm sang danh sách DTO
+		List<ProductDTO> mostSearchedProductDTOs = mostSearchedProducts.stream()
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				}).collect(Collectors.toList());
+
+		return mostSearchedProductDTOs;
 	}
 
 }

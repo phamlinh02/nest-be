@@ -42,6 +42,9 @@ public class Product implements Serializable {
 
 	private Long categoryId;
 
+	@Column(name = "search_count")
+	private Long searchCount = 0L;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
@@ -53,6 +56,13 @@ public class Product implements Serializable {
 
 	public Product(Long id){
 		this.id = id;
+	}
+
+	public void incrementSearchCount() {
+		if (this.searchCount == null) {
+			this.searchCount = 0L;
+		}
+		this.searchCount++;
 	}
 
 }
