@@ -5,6 +5,7 @@ import com.example.demo.domain.CartItem;
 import com.example.demo.domain.Product;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.cart.CartItemDTO;
+import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.util.CartItemService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class CartItemResource {
             return ResponseDTO.error();
         }
     }
+
 
     @PostMapping("/add")
     public ResponseDTO addToCart(@RequestBody CartItem item) {
@@ -85,6 +87,16 @@ public class CartItemResource {
             return ResponseDTO.success("Cart items updated successfully");
         } catch (Exception e) {
             // Trả về thông báo lỗi nếu xảy ra lỗi
+            return ResponseDTO.error();
+        }
+    }
+
+    @GetMapping("/top_popular")
+    public ResponseDTO getTop10ProductPopular(){
+        try {
+            List<Product> cartItems = cartItemSevice.getTopProductsAcrossAccounts(3);
+            return ResponseDTO.success(cartItems);
+        } catch (Exception e) {
             return ResponseDTO.error();
         }
     }

@@ -89,4 +89,16 @@ public class ProductResource {
 	}
 	
 
+	@GetMapping("/get-recently-added")
+	@ApiOperation(value = "Lấy danh sách sản phẩm mới được thêm vào gần đây")
+	public ResponseDTO getRecentlyAddedProducts() {
+		return ResponseDTO.success(this.productService.getRecentlyAddedProducts(3));
+	}
+
+	@GetMapping("/get-most-searched-products")
+	@ApiOperation(value = "Lấy danh sách sản phẩm có số lượt tìm kiếm nhiều nhất")
+	public ResponseDTO getMostSearchedProducts() {
+		return ResponseDTO.success(this.productService.getMostSearchedProducts(3));
+	}
+
 }

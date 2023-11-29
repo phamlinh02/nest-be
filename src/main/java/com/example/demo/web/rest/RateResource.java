@@ -74,5 +74,11 @@ public class RateResource {
 	public ResponseDTO getRateStatistics(Pageable pageable) {
 	    return ResponseDTO.success(this.rateService.getRateStatistics());
 	}
+
+	@GetMapping("/get-top-rated-products")
+	@ApiOperation(value = "Lấy danh sách sản phẩm có đánh giá cao nhất")
+	public ResponseDTO getTopRatedProducts() {
+		return ResponseDTO.success(this.rateService.getTopRatedProducts(3));
+	}
 	
 }

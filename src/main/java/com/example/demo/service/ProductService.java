@@ -14,9 +14,7 @@ import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -254,10 +252,17 @@ public class ProductService {
 	}
 
 	public Page<ProductDTO> searchProductsByName(String productName, Pageable pageable) {
+		// Tìm kiếm sản phẩm theo tên
 		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
 
-		List<ProductDTO> activeProducts = productPage.getContent().stream().filter(product -> product.getIsActive())
+		// Lấy danh sách sản phẩm và thực hiện các xử lý khác
+		List<ProductDTO> productDTOs = productPage.getContent().stream()
 				.map(product -> {
+					// Tăng số lần tìm kiếm của sản phẩm
+					product.incrementSearchCount();
+					// Lưu lại sản phẩm với số lần tìm kiếm đã được cập nhật
+					productRepository.save(product);
+
 					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
 					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
 					if (category != null) {
@@ -266,7 +271,8 @@ public class ProductService {
 					return productDTO;
 				}).collect(Collectors.toList());
 
-		Page<ProductDTO> productDTOPage = new PageImpl<>(activeProducts, pageable, activeProducts.size());
+		// Tạo trang ProductDTO từ danh sách sản phẩm
+		Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOs, pageable, productPage.getTotalElements());
 
 		return productDTOPage;
 	}
@@ -338,4 +344,57 @@ public class ProductService {
 
 	    return statistic;
 	}
+
+	public ProductDTO convertToDTO(Product product) {
+		ProductDTO productDTO = new ProductDTO();
+		productDTO.setId(product.getId());
+		productDTO.setProductName(product.getProductName());
+		productDTO.setPrice(product.getPrice());
+		productDTO.setCategoryId(String.valueOf(product.getCategoryId()));
+		productDTO.setImage(product.getImage());
+		// Set other fields as needed
+		return productDTO;
+	}
+
+	public List<ProductDTO> getRecentlyAddedProducts(int limit) {
+		// Retrieve recently added products sorted by creation date in descending order
+		List<Product> recentlyAddedProducts = productRepository.findAll(
+						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
+				.getContent();
+
+		// Map the recently added products to DTOs
+		List<ProductDTO> recentlyAddedProductDTOs = recentlyAddedProducts.stream()
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				})
+				.collect(Collectors.toList());
+
+		return recentlyAddedProductDTOs;
+	}
+
+	public List<ProductDTO> getMostSearchedProducts(int limit) {
+		// Sắp xếp sản phẩm theo số lần tìm kiếm giảm dần và giới hạn số lượng sản phẩm
+		List<Product> mostSearchedProducts = productRepository.findAll(
+						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "searchCount")))
+				.getContent();
+
+		// Ánh xạ danh sách sản phẩm sang danh sách DTO
+		List<ProductDTO> mostSearchedProductDTOs = mostSearchedProducts.stream()
+				.map(product -> {
+					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+					return productDTO;
+				}).collect(Collectors.toList());
+
+		return mostSearchedProductDTOs;
+	}
+
 }

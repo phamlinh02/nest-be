@@ -1,11 +1,14 @@
 package com.example.demo.web.rest;
 
+import com.example.demo.domain.Product;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.order.BillDTO;
 import com.example.demo.service.dto.order.ViewBillDetail;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/nest/order")
 @RestController
@@ -14,7 +17,7 @@ public class OrderResource {
 
     private final OrderService orderService;
 
-    OrderResource(OrderService orderService) {
+    OrderResource(OrderService orderService){
         this.orderService = orderService;
     }
 
@@ -48,6 +51,16 @@ public class OrderResource {
     public ResponseDTO createBill(@RequestBody ViewBillDetail cart) {
         this.orderService.createBill(cart);
         return ResponseDTO.success();
+    }
+
+    @GetMapping("/selling")
+    public ResponseDTO getTopSellingProducts() {
+        try {
+            List<Product> order = orderService.getTopSellingProducts(3);
+            return ResponseDTO.success(order);
+        } catch (Exception e) {
+            return ResponseDTO.error();
+        }
     }
     @GetMapping("/statistics")
     public ResponseDTO statisticsBill() {

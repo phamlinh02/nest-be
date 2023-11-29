@@ -2,24 +2,11 @@ package com.example.demo.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import java.util.Date;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,6 +42,30 @@ public class Product implements Serializable {
 	private Boolean isActive;
 
 	private Long categoryId;
+
+
+	@Column(name = "search_count")
+	private Long searchCount = 0L;
+
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt;
+
+	// Constructors, getters, setters, and other methods...
+
+	@PrePersist
+	protected void onCreate() {
+		createdAt = LocalDateTime.now();}
+
+	public Product(Long id){
+		this.id = id;
+	}
+
+	public void incrementSearchCount() {
+		if (this.searchCount == null) {
+			this.searchCount = 0L;
+		}
+		this.searchCount++;
+	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getEndDate() {
@@ -65,6 +76,5 @@ public class Product implements Serializable {
 	    }
 	    return endDate;
 	}
-
 
 }

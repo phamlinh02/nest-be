@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -198,4 +199,31 @@ public class RateService {
     private int countRatesByStar(List<Rate> rates, int star) {
         return (int) rates.stream().filter(rate -> rate.getStar() == star).count();
     }
+
+	public List<ProductDTO> getTopRatedProducts(int limit) {
+		List<ProductDTO> topProducts = productRepository.findAll().stream()
+				.map(product -> {
+					double averageRating = calculateAverageRating(product.getId());
+					return ProductDTO.builder()
+							.id(product.getId())
+							.productName(product.getProductName())
+							.averageRating(averageRating)
+							.build();
+				})
+				.sorted(Comparator.comparingDouble(ProductDTO::getAverageRating).reversed())
+				.limit(limit)
+				.collect(Collectors.toList());
+
+		return topProducts;
+	}
+
+	private double calculateAverageRating(Long productId) {
+		List<Rate> productRates = rateRepository.findByProductId(productId);
+		if (productRates.isEmpty()) {
+			return 0.0;
+		}
+
+		int totalStars = productRates.stream().mapToInt(Rate::getStar).sum();
+		return (double) totalStars / productRates.size();
+	}
 }

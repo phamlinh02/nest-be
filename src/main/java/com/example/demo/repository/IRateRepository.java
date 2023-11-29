@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.domain.Rate;
 
+import java.util.List;
+
 public interface IRateRepository extends JpaRepository<Rate, Long>{
 	Page<Rate> findByProductId(Long productId, Pageable pageable);
+
+	List<Rate> findByProductId(Long productId);
 
 }

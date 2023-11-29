@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -126,6 +129,42 @@ public class OrderService {
         return result;
     }
 
+    public List<Product> getTopSellingProducts(int limit) {
+        // Assuming you have a service or repository to retrieve all bill details
+        List<BillDetail> allBillDetails = iOrderDetailRepository.findAll(); // Replace with actual service/repository
+
+        // Group bill details by product and sum the quantities
+        Map<Long, Long> productQuantities = allBillDetails.stream()
+                .collect(Collectors.groupingBy(BillDetail::getProductId,
+                        Collectors.summingLong(BillDetail::getQuantity)));
+
+        // Sort products by total quantity in descending order
+        List<Product> sortedProducts = productQuantities.entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
+                .limit(limit)
+                .map(entry -> {
+                    Product product = new Product();
+                    product.setId(entry.getKey()); // Assuming Product has an 'id' field
+
+                    // Fetch additional details from your Product entity based on the ID
+                    // Replace with actual logic to retrieve Product by ID
+                    Optional<Product> productDetails = productRepository.findById(entry.getKey());
+                    product.setId(productDetails.get().getId());
+                    product.setProductName(productDetails.get().getProductName());
+                    product.setDescription(productDetails.get().getDescription());
+                    product.setPrice(productDetails.get().getPrice());
+                    product.setImage(productDetails.get().getImage());
+                    product.setCategoryId(productDetails.get().getCategoryId());
+                    // Add other fields as needed
+
+                    return product;
+                })
+                .collect(Collectors.toList());
+
+        return sortedProducts;
+    }
+
+
     public StatisticsBillDTO getStatisticsBill() {
 
         return StatisticsBillDTO.builder().totalBill(
@@ -143,12 +182,12 @@ public class OrderService {
 
     }
 
-    public List<BillDTO> getListBill(){
+    public List<BillDTO> getListBill() {
         return MapperUtils.mapList(this.iOrderRepository.findAllByOrderByOrderDateDesc(), BillDTO.class);
     }
-    
+
     public void saveEntity(BillDTO bill) {
-    	this.iOrderRepository.save(MapperUtils.map(bill, Bill.class));
+        this.iOrderRepository.save(MapperUtils.map(bill, Bill.class));
     }
 
 }
