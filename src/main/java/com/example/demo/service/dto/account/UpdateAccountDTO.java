@@ -21,6 +21,5 @@ public class UpdateAccountDTO {
     private String address;
     private String phone;
     private MultipartFile avatar;
-    @Enumerated(EnumType.STRING)
-	private Constant.ROLE_USER roleName;
+    private Boolean isActive;
 }

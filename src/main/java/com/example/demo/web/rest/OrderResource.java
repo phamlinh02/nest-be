@@ -34,6 +34,14 @@ public class OrderResource {
         return ResponseDTO.success(this.orderService.updateBill(dto));
     }
 
+
+    @PostMapping("/save")
+    public ResponseDTO saveBill(@RequestBody BillDTO dto) {
+    	this.orderService.saveEntity(dto);
+        return ResponseDTO.success();
+    }
+
+    
     @GetMapping("/get-detail/{id}")
     public ResponseDTO getDetailBill(@PathVariable Long id) {
         return ResponseDTO.success(this.orderService.getBillDetail(id));
@@ -46,12 +54,20 @@ public class OrderResource {
     }
 
     @GetMapping("/selling")
-    public ResponseDTO getTopSellingProducts(){
+    public ResponseDTO getTopSellingProducts() {
         try {
             List<Product> order = orderService.getTopSellingProducts(3);
             return ResponseDTO.success(order);
         } catch (Exception e) {
             return ResponseDTO.error();
         }
+    }
+    @GetMapping("/statistics")
+    public ResponseDTO statisticsBill() {
+        return ResponseDTO.success(this.orderService.getStatisticsBill());
+    }
+    @GetMapping("/order-bill")
+    public ResponseDTO getOrderBill() {
+        return ResponseDTO.success(this.orderService.getListBill());
     }
 }

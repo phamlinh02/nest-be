@@ -1,9 +1,7 @@
-package com.example.demo.service.dto.account;
+package com.example.demo.service.dto.authority;
 
 import com.example.demo.config.Constant;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,26 +11,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccountDTO{
-
+public class AuthorityDTO {
 	private Long id;
+
+	private Long accountId;
 	
 	private String username;
-
-	private String password;
-
-	private String email;
-
+	
 	private String fullName;
-
-	private String address;
-
-	private String phone;
-
+	
 	private String avatar;
+
+	private Long roleId;
 	
-	@Enumerated(EnumType.STRING)
 	private Constant.ROLE_USER roleName;
-	
-	private Boolean isActive;
 }

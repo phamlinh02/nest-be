@@ -7,6 +7,7 @@ import com.example.demo.config.Constant;
 import com.example.demo.config.exception.common.NotFoundException;
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Authority;
+import com.example.demo.domain.Product;
 import com.example.demo.domain.Role;
 import com.example.demo.repository.IAccountRepository;
 import com.example.demo.repository.IAuthorityRepository;
@@ -22,6 +23,9 @@ import com.example.demo.service.dto.account.JwtResponse;
 import com.example.demo.service.dto.account.PayloadLogin;
 import com.example.demo.service.dto.account.UpdateAccountByUserDTO;
 import com.example.demo.service.dto.account.UpdateAccountDTO;
+import com.example.demo.service.dto.account.UpdateStatusAccountDTO;
+import com.example.demo.service.dto.product.ProductDTO;
+import com.example.demo.service.dto.product.UpdateProductStatusDTO;
 import com.example.demo.service.mapper.MapperUtils;
 import com.example.demo.service.util.PasswordGenerator;
 
@@ -82,7 +86,7 @@ public class AccountService {
 
 			Account accountEntity = MapperUtils.map(account, Account.class);
 			accountEntity.setPassword(encoder.encode(account.getPassword()));
-
+			accountEntity.setIsActive(true);
 			accountEntity = accountRepository.save(accountEntity);
 
 			Role customerRole = roleRepository.findByRoleName(Constant.ROLE_USER.ROLE_CUSTOMER);
@@ -140,7 +144,7 @@ public class AccountService {
 
 			accountEntity = accountRepository.save(accountEntity);
 
-			Role customerRole = roleRepository.findByRoleName(account.getRoleName());
+			Role customerRole = roleRepository.findByRoleName(Constant.ROLE_USER.ROLE_CUSTOMER);
 
 			if (customerRole == null) {
 				throw new NotFoundException("Vai trò không tồn tại");
@@ -224,6 +228,10 @@ public class AccountService {
 
 		Account account = accountRepository.findByUsername(username)
 				.orElseThrow(() -> new NotFoundException("Tên đăng nhập không tồn tại"));
+		
+		if (!account.getIsActive()) {
+	        throw new NotFoundException("Tài khoản không hoạt động. Liên hệ với quản trị viên để biết thêm chi tiết.");
+	    }
 
 		if (encoder.matches(password, account.getPassword())) {
 			Authentication authentication = authenticationProvider
@@ -242,7 +250,8 @@ public class AccountService {
 					accountDetails.getAddress(),
 					accountDetails.getPhone(), 
 					accountDetails.getAvatar(), 
-					accountDetails.getRoleName());
+					accountDetails.getRoleName(),
+					accountDetails.getIsActive());
 			return jwtResponse;
 		} else {
 			throw new NotFoundException("Sai mật khẩu");
@@ -307,6 +316,7 @@ public class AccountService {
 		account.setEmail(updateAccountDTO.getEmail());
 		account.setAddress(updateAccountDTO.getAddress());
 		account.setPhone(updateAccountDTO.getPhone());
+		account.setIsActive(updateAccountDTO.getIsActive());
 		String newAvatarPath = null;
 
 		if (avatarFile != null) {
@@ -338,22 +348,8 @@ public class AccountService {
 			account.setAvatar(oldAvatarPath);
 		}
 
-		Role role = roleRepository.findByRoleName(updateAccountDTO.getRoleName());
-
-		if (role == null) {
-			throw new NotFoundException("Không tìm thấy role");
-		}
-		authorityRepository.deleteByAccountId(account.getId());
-
-		Authority newAuthority = new Authority();
-		newAuthority.setAccountId(account.getId());
-		newAuthority.setRoleId(role.getId());
-		authorityRepository.save(newAuthority);
-
 		Account accountEntity = MapperUtils.map(account, Account.class);
 		AccountDTO accountDTO = MapperUtils.map(this.accountRepository.save(accountEntity), AccountDTO.class);
-
-		accountDTO.setRoleName(updateAccountDTO.getRoleName());
 
 		return accountDTO;
 	}
@@ -416,6 +412,19 @@ public class AccountService {
 	public long countActiveAccounts() {
         return accountRepository.count();
     }
+	
+	public AccountDTO updateAccountStatus(UpdateStatusAccountDTO updateStatusDTO) {
+		Account account = this.accountRepository.findById(updateStatusDTO.getId())
+				.orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản"));
+
+		account.setIsActive(updateStatusDTO.isActive());
+
+		Account updatedAccount = this.accountRepository.save(account);
+
+		AccountDTO accountDTO = MapperUtils.map(updatedAccount, AccountDTO.class);
+
+		return accountDTO;
+	}
 	
 	
 }

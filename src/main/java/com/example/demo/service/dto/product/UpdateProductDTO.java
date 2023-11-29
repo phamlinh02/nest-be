@@ -26,6 +26,8 @@ public class UpdateProductDTO {
 	private MultipartFile image;
 	
 	private Boolean isActive;
+	
+	private String endDate;
 
 	private String categoryName;
 }

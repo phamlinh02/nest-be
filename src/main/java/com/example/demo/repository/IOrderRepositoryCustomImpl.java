@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +39,8 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
         }
 
         if (!DataUtils.isNullObject(dto.getOrderDate())) {
-            sql.append(" and b.order_date = :date");
-            params.put("date", dto.getOrderDate());
+            sql.append(" and b.order_date like :date");
+            params.put("date", new SimpleDateFormat("yyyy-MM-dd").format(dto.getOrderDate()) + "%");
         }
 
         if(!DataUtils.isNullObject(dto.getStatus())){

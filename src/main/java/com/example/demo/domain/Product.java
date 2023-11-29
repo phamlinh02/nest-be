@@ -3,11 +3,9 @@ package com.example.demo.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Date;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,9 +36,13 @@ public class Product implements Serializable {
 	@Column(length = 255)
 	private String image;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
+
 	private Boolean isActive;
 
 	private Long categoryId;
+
 
 	@Column(name = "search_count")
 	private Long searchCount = 0L;
@@ -63,6 +65,16 @@ public class Product implements Serializable {
 			this.searchCount = 0L;
 		}
 		this.searchCount++;
+	}
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getEndDate() {
+	    if (endDate != null && endDate.before(new Date())) {
+	        isActive = false;
+	    } else {
+	        isActive = true;
+	    }
+	    return endDate;
 	}
 
 }
