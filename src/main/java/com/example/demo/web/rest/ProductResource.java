@@ -91,14 +91,20 @@ public class ProductResource {
 
 	@GetMapping("/get-recently-added")
 	@ApiOperation(value = "Lấy danh sách sản phẩm mới được thêm vào gần đây")
-	public ResponseDTO getRecentlyAddedProducts() {
-		return ResponseDTO.success(this.productService.getRecentlyAddedProducts(3));
+	public ResponseDTO getRecentlyAddedProducts(Pageable page) {
+		return ResponseDTO.success(this.productService.getRecentlyAddedProducts(3,page));
 	}
 
 	@GetMapping("/get-most-searched-products")
 	@ApiOperation(value = "Lấy danh sách sản phẩm có số lượt tìm kiếm nhiều nhất")
-	public ResponseDTO getMostSearchedProducts() {
-		return ResponseDTO.success(this.productService.getMostSearchedProducts(3));
+	public ResponseDTO getMostSearchedProducts(Pageable page) {
+		return ResponseDTO.success(this.productService.getMostSearchedProducts(3,page));
+	}
+	
+	@GetMapping("/top-rated-products")
+	@ApiOperation(value = "Lấy danh sách 10 sản phẩm có đánh giá sao cao nhất")
+	public ResponseDTO getTopRatedProducts(int limit) {
+	    return ResponseDTO.success(this.productService.getTopRatedProducts(limit));
 	}
 
 }
