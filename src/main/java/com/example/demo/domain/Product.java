@@ -47,14 +47,14 @@ public class Product implements Serializable {
 	@Column(name = "search_count")
 	private Long searchCount = 0L;
 
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdAt;
 
 	// Constructors, getters, setters, and other methods...
 
 	@PrePersist
 	protected void onCreate() {
-		createdAt = LocalDateTime.now();}
+		createdAt = new Date();}
 
 	public Product(Long id){
 		this.id = id;

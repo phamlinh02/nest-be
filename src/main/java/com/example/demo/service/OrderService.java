@@ -7,6 +7,7 @@ import com.example.demo.domain.Account;
 import com.example.demo.domain.Bill;
 import com.example.demo.domain.BillDetail;
 import com.example.demo.domain.Product;
+import com.example.demo.domain.Rate;
 import com.example.demo.repository.*;
 import com.example.demo.service.dto.account.AccountDTO;
 import com.example.demo.service.dto.order.BillDTO;
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 @Service
@@ -155,6 +157,7 @@ public class OrderService {
                     product.setPrice(productDetails.get().getPrice());
                     product.setImage(productDetails.get().getImage());
                     product.setCategoryId(productDetails.get().getCategoryId());
+                    
                     // Add other fields as needed
 
                     return product;

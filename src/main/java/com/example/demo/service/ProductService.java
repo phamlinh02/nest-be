@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.UUID;
@@ -356,7 +357,7 @@ public class ProductService {
 		return productDTO;
 	}
 
-	public List<ProductDTO> getRecentlyAddedProducts(int limit) {
+	public List<ProductDTO> getRecentlyAddedProducts(int limit,Pageable pageable) {
 		// Retrieve recently added products sorted by creation date in descending order
 		List<Product> recentlyAddedProducts = productRepository.findAll(
 						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
@@ -370,6 +371,14 @@ public class ProductService {
 					if (category != null) {
 						productDTO.setCategoryName(category.getName());
 					}
+					Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
+					List<Rate> rates = ratesPage.getContent();
+
+					long totalRatings = ratesPage.getTotalElements();
+					OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+
+					productDTO.setTotalRatings(totalRatings);
+					productDTO.setAverageRating(averageRating.orElse(0.0));
 					return productDTO;
 				})
 				.collect(Collectors.toList());
@@ -377,7 +386,7 @@ public class ProductService {
 		return recentlyAddedProductDTOs;
 	}
 
-	public List<ProductDTO> getMostSearchedProducts(int limit) {
+	public List<ProductDTO> getMostSearchedProducts(int limit, Pageable pageable) {
 		// Sắp xếp sản phẩm theo số lần tìm kiếm giảm dần và giới hạn số lượng sản phẩm
 		List<Product> mostSearchedProducts = productRepository.findAll(
 						PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "searchCount")))
@@ -391,10 +400,57 @@ public class ProductService {
 					if (category != null) {
 						productDTO.setCategoryName(category.getName());
 					}
+					Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
+					List<Rate> rates = ratesPage.getContent();
+
+					long totalRatings = ratesPage.getTotalElements();
+					OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+
+					productDTO.setTotalRatings(totalRatings);
+					productDTO.setAverageRating(averageRating.orElse(0.0));
+	                
 					return productDTO;
 				}).collect(Collectors.toList());
 
 		return mostSearchedProductDTOs;
 	}
+	public List<ProductDTO> getTopRatedProducts(int limit) {
+	    List<Product> topRatedProducts = productRepository.findAll();
+
+	    topRatedProducts.sort(Comparator.comparingDouble(this::calculateAverageRating).reversed());
+
+	    List<Product> topProductsLimited = topRatedProducts.stream().limit(limit).collect(Collectors.toList());
+
+	    List<ProductDTO> topRatedProductDTOs = topProductsLimited.stream()
+	            .map(product -> {
+	                ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+
+	                Page<Rate> ratesPage = rateRepository.findByProductId(product.getId(), PageRequest.of(0, 10));
+	                List<Rate> rates = ratesPage.getContent();
+	                long totalRatings = ratesPage.getTotalElements();
+	                OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+	                Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+					if (category != null) {
+						productDTO.setCategoryName(category.getName());
+					}
+	                
+	                productDTO.setTotalRatings(totalRatings);
+	                productDTO.setAverageRating(averageRating.orElse(0.0));
+
+	                return productDTO;
+	            })
+	            .collect(Collectors.toList());
+
+	    return topRatedProductDTOs;
+	}
+
+
+	private double calculateAverageRating(Product product) {
+	    Page<Rate> ratesPage = rateRepository.findByProductId(product.getId(), PageRequest.of(0, 10));
+	    List<Rate> rates = ratesPage.getContent();
+
+	    return rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
+	}
+	
 
 }
