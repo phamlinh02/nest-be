@@ -94,7 +94,7 @@ public class CartItemResource {
     @GetMapping("/top_popular")
     public ResponseDTO getTop10ProductPopular(){
         try {
-            List<Product> cartItems = cartItemSevice.getTopProductsAcrossAccounts(3);
+            List<Product> cartItems = cartItemSevice.getTopProductsAcrossAccounts(10);
             return ResponseDTO.success(cartItems);
         } catch (Exception e) {
             return ResponseDTO.error();

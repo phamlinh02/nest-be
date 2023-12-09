@@ -95,6 +95,12 @@ public class ProductResource {
 		return ResponseDTO.success(this.productService.getRecentlyAddedProducts(3,page));
 	}
 
+	@GetMapping("/get-recently")
+	@ApiOperation(value = "Lấy danh sách sản phẩm mới được thêm vào gần đây")
+	public ResponseDTO getRecentlyAddedProduct(Pageable page) {
+		return ResponseDTO.success(this.productService.getRecentlyAddedProducts(10,page));
+	}
+
 	@GetMapping("/get-most-searched-products")
 	@ApiOperation(value = "Lấy danh sách sản phẩm có số lượt tìm kiếm nhiều nhất")
 	public ResponseDTO getMostSearchedProducts(Pageable page) {
