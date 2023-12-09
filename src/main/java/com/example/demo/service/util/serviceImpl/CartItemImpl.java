@@ -5,7 +5,6 @@ import com.example.demo.domain.CartItem;
 import com.example.demo.domain.Product;
 import com.example.demo.repository.ICartItemRepository;
 import com.example.demo.service.ProductService;
-import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.util.CartItemService;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +97,3 @@ public class CartItemImpl implements CartItemService {
         return sortedProducts;
     }
 }
-
-
-

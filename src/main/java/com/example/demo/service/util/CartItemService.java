@@ -2,6 +2,7 @@ package com.example.demo.service.util;
 
 import com.example.demo.domain.CartItem;
 import com.example.demo.domain.Product;
+import com.example.demo.service.dto.cart.CartItemDTO;
 import com.example.demo.service.dto.product.ProductDTO;
 
 import java.util.List;
