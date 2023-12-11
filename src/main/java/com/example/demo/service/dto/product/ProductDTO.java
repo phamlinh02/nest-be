@@ -29,7 +29,7 @@ public class ProductDTO {
 
     private Boolean isActive;
     
-    private String categoryId;
+    private Long categoryId;
 
     private String categoryName;
     

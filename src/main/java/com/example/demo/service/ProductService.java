@@ -351,7 +351,7 @@ public class ProductService {
 		productDTO.setId(product.getId());
 		productDTO.setProductName(product.getProductName());
 		productDTO.setPrice(product.getPrice());
-		productDTO.setCategoryId(String.valueOf(product.getCategoryId()));
+		productDTO.setCategoryId(product.getCategoryId());
 		productDTO.setImage(product.getImage());
 		// Set other fields as needed
 		return productDTO;
