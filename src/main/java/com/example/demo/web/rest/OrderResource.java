@@ -5,6 +5,8 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.order.BillDTO;
 import com.example.demo.service.dto.order.ViewBillDetail;
+import com.example.demo.service.dto.product.ProductDTO;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +58,7 @@ public class OrderResource {
     @GetMapping("/selling")
     public ResponseDTO getTopSellingProducts() {
         try {
-            List<Product> order = orderService.getTopSellingProducts(3);
+            List<ProductDTO> order = orderService.getTopSellingProducts(3);
             return ResponseDTO.success(order);
         } catch (Exception e) {
             return ResponseDTO.error();

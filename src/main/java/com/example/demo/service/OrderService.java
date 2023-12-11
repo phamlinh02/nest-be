@@ -40,6 +40,7 @@ public class OrderService {
     private final IProductRepository productRepository;
     private final ICartItemRepository cartItemRepository;
     private final CartItemService cartItemService;
+    private final IRateRepository rateRepository;
 
     public OrderService(
             IOrderRepository iOrderRepository,
@@ -47,7 +48,8 @@ public class OrderService {
             IAccountRepository accountRepository,
             IProductRepository productRepository,
             ICartItemRepository iCartItemRepository,
-            CartItemService cartItemService
+            CartItemService cartItemService,
+            IRateRepository rateRepository
     ) {
         this.iOrderDetailRepository = iOrderDetailRepository;
         this.iOrderRepository = iOrderRepository;
@@ -55,6 +57,7 @@ public class OrderService {
         this.productRepository = productRepository;
         this.cartItemRepository = iCartItemRepository;
         this.cartItemService = cartItemService;
+        this.rateRepository = rateRepository;
 
     }
 
@@ -131,7 +134,7 @@ public class OrderService {
         return result;
     }
 
-    public List<Product> getTopSellingProducts(int limit) {
+    public List<ProductDTO> getTopSellingProducts(int limit) {
         // Assuming you have a service or repository to retrieve all bill details
         List<BillDetail> allBillDetails = iOrderDetailRepository.findAll(); // Replace with actual service/repository
 
@@ -141,26 +144,31 @@ public class OrderService {
                         Collectors.summingLong(BillDetail::getQuantity)));
 
         // Sort products by total quantity in descending order
-        List<Product> sortedProducts = productQuantities.entrySet().stream()
+        List<ProductDTO> sortedProducts = productQuantities.entrySet().stream()
                 .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
                 .limit(limit)
                 .map(entry -> {
-                    Product product = new Product();
-                    product.setId(entry.getKey()); // Assuming Product has an 'id' field
+                    ProductDTO productDTO = new ProductDTO();
 
                     // Fetch additional details from your Product entity based on the ID
                     // Replace with actual logic to retrieve Product by ID
                     Optional<Product> productDetails = productRepository.findById(entry.getKey());
-                    product.setId(productDetails.get().getId());
-                    product.setProductName(productDetails.get().getProductName());
-                    product.setDescription(productDetails.get().getDescription());
-                    product.setPrice(productDetails.get().getPrice());
-                    product.setImage(productDetails.get().getImage());
-                    product.setCategoryId(productDetails.get().getCategoryId());
-                    
-                    // Add other fields as needed
+                    productDTO.setId(productDetails.get().getId());
+                    productDTO.setProductName(productDetails.get().getProductName());
+                    productDTO.setDescription(productDetails.get().getDescription());
+                    productDTO.setPrice(productDetails.get().getPrice());
+                    productDTO.setImage(productDetails.get().getImage());
+                    productDTO.setCategoryId(productDetails.get().getCategoryId());
 
-                    return product;
+                    // Calculate TotalRatings and AverageRating based on Rate entity
+                    List<Rate> rates = rateRepository.findByProductId(productDTO.getId());
+                    long totalRatings = rates.size();
+                    double averageRating = rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
+
+                    productDTO.setTotalRatings(totalRatings);
+                    productDTO.setAverageRating(averageRating);
+
+                    return productDTO;
                 })
                 .collect(Collectors.toList());
 
