@@ -62,6 +62,11 @@ public class Constant {
         NEW
     }
 
+    public enum PAYMENT_METHOD{
+        ONLINE,
+        MANUAL
+    }
+
     public enum ROLE_USER{
         ROLE_DIRECTOR,
         ROLE_ADMIN,

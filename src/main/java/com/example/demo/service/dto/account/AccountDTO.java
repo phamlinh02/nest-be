@@ -35,4 +35,7 @@ public class AccountDTO{
 	private Constant.ROLE_USER roleName;
 	
 	private Boolean isActive;
+	private String paymentNumber;
+	private String paymentName;
+
 }

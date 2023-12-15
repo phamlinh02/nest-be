@@ -33,6 +33,7 @@ public class BillDTO {
     private String email;
     private String username;
     private String fullName;
+    private String paymentId;
 
 
 //    getAllOrder

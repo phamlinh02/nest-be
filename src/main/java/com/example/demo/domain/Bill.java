@@ -55,4 +55,8 @@ public class Bill {
 	private Constant.BILL_STATUS status;
 
     private String reasonDeny;
+	private String paymentId;
+	private String orderId;
+	@Enumerated(EnumType.STRING)
+	private Constant.PAYMENT_METHOD paymentMethod;
 }

@@ -13,4 +13,5 @@ public interface IRoleRepository extends JpaRepository<Role, Long>{
 	boolean existsByRoleName(Constant.ROLE_USER roleName);
 	
 	Page<Role> findByIsActiveTrue(Pageable pageable);
+
 }
