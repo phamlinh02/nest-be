@@ -8,4 +8,5 @@ public class PermissionException extends ServerException {
     public PermissionException(ErrorCode errorCode, ErrorCode.Params... params) {
         super(errorCode, HttpStatus.UNAUTHORIZED, params);
     }
+    public PermissionException(){}
 }

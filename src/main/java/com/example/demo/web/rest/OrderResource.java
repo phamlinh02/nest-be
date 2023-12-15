@@ -4,6 +4,7 @@ import com.example.demo.domain.Product;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.order.BillDTO;
+import com.example.demo.service.dto.order.TransactionDTO;
 import com.example.demo.service.dto.order.ViewBillDetail;
 import com.example.demo.service.dto.product.ProductDTO;
 
@@ -51,8 +52,7 @@ public class OrderResource {
 
     @PostMapping("/create-bill")
     public ResponseDTO createBill(@RequestBody ViewBillDetail cart) {
-        this.orderService.createBill(cart);
-        return ResponseDTO.success();
+        return this.orderService.createBill(cart);
     }
 
     @GetMapping("/selling")
@@ -72,4 +72,11 @@ public class OrderResource {
     public ResponseDTO getOrderBill() {
         return ResponseDTO.success(this.orderService.getListBill());
     }
+
+    @PostMapping("/transaction-success")
+    public ResponseDTO updateTransaction(@RequestBody BillDTO dto){
+        this.orderService.updatePaymentTransaction(dto);
+        return ResponseDTO.success();
+    }
+
 }

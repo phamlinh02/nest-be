@@ -16,4 +16,5 @@ public class ViewBillDetail {
     private AccountDTO account;
     private List<BillDetailDTO> billDetails;
     private BillDTO bill;
+    private Boolean payonline = false;
 }

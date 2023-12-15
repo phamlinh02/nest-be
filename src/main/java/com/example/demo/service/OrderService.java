@@ -3,31 +3,29 @@ package com.example.demo.service;
 import com.example.demo.config.Constant;
 import com.example.demo.config.exception.common.NotEnoughException;
 import com.example.demo.config.exception.common.NotFoundException;
-import com.example.demo.domain.Account;
-import com.example.demo.domain.Bill;
-import com.example.demo.domain.BillDetail;
-import com.example.demo.domain.Product;
-import com.example.demo.domain.Rate;
+import com.example.demo.config.exception.common.PermissionException;
+import com.example.demo.domain.*;
 import com.example.demo.repository.*;
+import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.account.AccountDTO;
-import com.example.demo.service.dto.order.BillDTO;
-import com.example.demo.service.dto.order.BillDetailDTO;
-import com.example.demo.service.dto.order.StatisticsBillDTO;
-import com.example.demo.service.dto.order.ViewBillDetail;
+import com.example.demo.service.dto.order.*;
 import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.mapper.MapperUtils;
 import com.example.demo.service.util.CartItemService;
 import com.example.demo.service.util.DataUtils;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +39,12 @@ public class OrderService {
     private final ICartItemRepository cartItemRepository;
     private final CartItemService cartItemService;
     private final IRateRepository rateRepository;
+    private final IRoleRepository roleRepository;
+    private final IAuthorityRepository authorityRepository;
+
+    private static final String KEY = "rzp_test_AXBzvN2fkD4ESK";
+    private static final String KEY_SECRET = "bsZmiVD7p1GMo6hAWiy4SHSH";
+    private static final String CURRENCY = "INR";
 
     public OrderService(
             IOrderRepository iOrderRepository,
@@ -49,7 +53,9 @@ public class OrderService {
             IProductRepository productRepository,
             ICartItemRepository iCartItemRepository,
             CartItemService cartItemService,
-            IRateRepository rateRepository
+            IRateRepository rateRepository,
+            IRoleRepository roleRepository,
+            IAuthorityRepository authorityRepository
     ) {
         this.iOrderDetailRepository = iOrderDetailRepository;
         this.iOrderRepository = iOrderRepository;
@@ -58,6 +64,8 @@ public class OrderService {
         this.cartItemRepository = iCartItemRepository;
         this.cartItemService = cartItemService;
         this.rateRepository = rateRepository;
+        this.roleRepository = roleRepository;
+        this.authorityRepository = authorityRepository;
 
     }
 
@@ -72,7 +80,8 @@ public class OrderService {
         return MapperUtils.map(this.iOrderRepository.save(bill), BillDTO.class);
     }
 
-    public void createBill(ViewBillDetail cartCheckout) {
+    public ResponseDTO createBill(ViewBillDetail cartCheckout) {
+        ResponseDTO responseDTO = new ResponseDTO();
         //save bill
         Bill bill = new Bill();
         BillDTO billDTO = cartCheckout.getBill();
@@ -90,6 +99,7 @@ public class OrderService {
         bill.setOrderDate(new Date());
         bill.setDescription(billDTO.getDescription());
         bill.setStatus(Constant.BILL_STATUS.NEW);
+        bill.setPaymentMethod(Constant.PAYMENT_METHOD.MANUAL);
 
         Bill finalBill = this.iOrderRepository.save(bill);
 
@@ -115,6 +125,14 @@ public class OrderService {
         });
 
         this.cartItemService.remove(bill.getAccountId());
+
+        double sumPrice = cartCheckout.getBillDetails().stream().map(a -> (a.getPrice().add(new BigDecimal(a.getQuantity()))).doubleValue()).reduce(0d, Double::sum);
+        if(cartCheckout.getPayonline()){
+            responseDTO.setSuccess(this.createTransaction(sumPrice, bill));
+            return responseDTO;
+        }
+
+        return responseDTO;
     }
 
     public ViewBillDetail getBillDetail(Long billID) {
@@ -201,4 +219,41 @@ public class OrderService {
         this.iOrderRepository.save(MapperUtils.map(bill, Bill.class));
     }
 
+    public TransactionDetails createTransaction(Double amount, Bill bill) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put("amount", amount);
+            json.put("currency", CURRENCY);
+
+            RazorpayClient razorpayClient = new RazorpayClient(KEY, KEY_SECRET);
+            Order order =  razorpayClient.orders.create(json);
+
+            TransactionDetails result = prepareTransactionDetail(order, bill);
+
+            bill.setOrderId(result.getOrderId());
+            bill.setPaymentMethod(Constant.PAYMENT_METHOD.ONLINE);
+            this.iOrderRepository.save(bill);
+            return result;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    private TransactionDetails prepareTransactionDetail(Order order, Bill bill){
+        return TransactionDetails.builder()
+                .orderId(order.get("id"))
+                .currency(order.get("currency"))
+                .amount(order.get("amount"))
+                .key(KEY)
+                .billId(bill.getId())
+                .build();
+    }
+
+    public void updatePaymentTransaction(BillDTO billDTO){
+        Bill bill = this.iOrderRepository.findById(billDTO.getId()).orElseThrow(NotFoundException::new);
+        bill.setPaymentId(billDTO.getPaymentId());
+        this.iOrderRepository.save(bill);
+    }
 }
