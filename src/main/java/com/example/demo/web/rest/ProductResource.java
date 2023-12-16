@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.domain.Product;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.dto.ResponseDTO;
 import com.example.demo.service.dto.product.CreateProductDTO;
+import com.example.demo.service.dto.product.ProductDTO;
 import com.example.demo.service.dto.product.UpdateProductDTO;
 import com.example.demo.service.dto.product.UpdateProductStatusDTO;
+import com.example.demo.service.util.CartItemService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -32,6 +35,8 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin("*")
 public class ProductResource {
 	private final ProductService productService;
+	
+	private final CartItemService cartItemSevice;
 
 	@GetMapping("/get-all-active")
 	@ApiOperation(value = "Lấy danh sách sản phẩm")
@@ -112,5 +117,25 @@ public class ProductResource {
 	public ResponseDTO getTopRatedProducts(int limit) {
 	    return ResponseDTO.success(this.productService.getTopRatedProducts(limit));
 	}
+	
+	 @GetMapping("/selling")
+	    public ResponseDTO getTopSellingProducts() {
+	        try {
+	            List<ProductDTO> order = productService.getTopSellingProducts(3);
+	            return ResponseDTO.success(order);
+	        } catch (Exception e) {
+	            return ResponseDTO.error();
+	        }
+	    }
+	 
+	 @GetMapping("/top_popular")
+	    public ResponseDTO getTop10ProductPopular(){
+	        try {
+	            List<Product> cartItems = cartItemSevice.getTopProductsAcrossAccounts(10);
+	            return ResponseDTO.success(cartItems);
+	        } catch (Exception e) {
+	            return ResponseDTO.error();
+	        }
+	    }
 
 }

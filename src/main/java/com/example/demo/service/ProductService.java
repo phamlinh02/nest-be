@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -451,6 +453,47 @@ public class ProductService {
 
 	    return rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
 	}
+	
+    public List<ProductDTO> getTopSellingProducts(int limit) {
+        // Assuming you have a service or repository to retrieve all bill details
+        List<BillDetail> allBillDetails = orderDetailReponsitory.findAll(); // Replace with actual service/repository
+
+        // Group bill details by product and sum the quantities
+        Map<Long, Long> productQuantities = allBillDetails.stream()
+                .collect(Collectors.groupingBy(BillDetail::getProductId,
+                        Collectors.summingLong(BillDetail::getQuantity)));
+
+        // Sort products by total quantity in descending order
+        List<ProductDTO> sortedProducts = productQuantities.entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
+                .limit(limit)
+                .map(entry -> {
+                    ProductDTO productDTO = new ProductDTO();
+
+                    // Fetch additional details from your Product entity based on the ID
+                    // Replace with actual logic to retrieve Product by ID
+                    Optional<Product> productDetails = productRepository.findById(entry.getKey());
+                    productDTO.setId(productDetails.get().getId());
+                    productDTO.setProductName(productDetails.get().getProductName());
+                    productDTO.setDescription(productDetails.get().getDescription());
+                    productDTO.setPrice(productDetails.get().getPrice());
+                    productDTO.setImage(productDetails.get().getImage());
+                    productDTO.setCategoryId(productDetails.get().getCategoryId());
+
+                    // Calculate TotalRatings and AverageRating based on Rate entity
+                    List<Rate> rates = rateRepository.findByProductId(productDTO.getId());
+                    long totalRatings = rates.size();
+                    double averageRating = rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
+
+                    productDTO.setTotalRatings(totalRatings);
+                    productDTO.setAverageRating(averageRating);
+
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
+
+        return sortedProducts;
+    }
 	
 
 }
