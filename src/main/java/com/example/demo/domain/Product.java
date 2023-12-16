@@ -69,11 +69,6 @@ public class Product implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getEndDate() {
-	    if (endDate != null && endDate.before(new Date())) {
-	        isActive = false;
-	    } else {
-	        isActive = true;
-	    }
 	    return endDate;
 	}
 
