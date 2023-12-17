@@ -26,7 +26,7 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
                 .append(" b.id, b.order_date orderDate, b.status, b.description, b.reason_deny reasonDeny, ")
                 .append(" (select count(b.id) from bill_detail b1 where b1.order_id = b.id GROUP by b1.order_id) countOrder, ")
                 .append(" (SELECT sum(b2.price * b2.quantity) from bill_detail b2 where  b2.order_id = b.id ) sumPriceBill, ")
-                .append(" a.email, a.username, a.full_name fullName ")
+                .append(" a.email, a.username, a.full_name fullName, b.payment_id paymentId ")
                 .append(" from bill b join bill_detail b3 on b.id = b3.order_id ")
                 .append(" join account a on a.id = b.account_id ")
                 .append(" where 1=1 ");
@@ -38,9 +38,10 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
             params.put("id", dto.getId());
         }
 
-        if (!DataUtils.isNullObject(dto.getOrderDate())) {
-            sql.append(" and b.order_date like :date");
-            params.put("date", new SimpleDateFormat("yyyy-MM-dd").format(dto.getOrderDate()) + "%");
+        if (!DataUtils.isNullObject(dto.getFromDate()) && !DataUtils.isNullObject(dto.getToDate())) {
+            sql.append(" and b.order_date between :fromDate and :toDate ");
+            params.put("fromDate", new SimpleDateFormat("yyyy-MM-dd").format(dto.getFromDate()));
+            params.put("toDate", new SimpleDateFormat("yyyy-MM-dd").format(DataUtils.addDays(dto.getToDate(), 1)));
         }
 
         if(!DataUtils.isNullObject(dto.getStatus())){

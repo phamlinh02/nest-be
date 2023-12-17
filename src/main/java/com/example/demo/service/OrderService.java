@@ -77,6 +77,7 @@ public class OrderService {
         Bill bill = this.iOrderRepository.findById(dto.getId()).orElseThrow(NotFoundException::new);
         bill.setStatus(dto.getStatus());
         bill.setDescription(dto.getDescription());
+        bill.setReasonDeny(dto.getReasonDeny());
         return MapperUtils.map(this.iOrderRepository.save(bill), BillDTO.class);
     }
 
