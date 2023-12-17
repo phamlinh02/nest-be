@@ -92,7 +92,7 @@ public class ProductResource {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
 	@ApiOperation(value = "Thống kê số lượng sản phẩm")
 	public ResponseDTO statisticProduct() {
-		return ResponseDTO.success(this.productService.statisticProduct());
+		return ResponseDTO.success(this.productService.calculateTotalProduc());
 	}
 	
 

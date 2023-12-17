@@ -312,34 +312,13 @@ public class ProductService {
         }
         return QtyProduct-QtyBillDetail;
     }
-	
-	public StatisticProductDTO statisticProduct() {
-	    StatisticProductDTO statistic = new StatisticProductDTO();
-	    List<CategoryStatisticDTO> categoryStatistics = new ArrayList<>();
 
-	    // Get all active categories
-	    List<Category> activeCategories = this.categoryRepository.findByIsActive(true);
+	public long calculateTotalProduc() {
+		List<Product> product = productRepository.findAll();
 
-	    for (Category category : activeCategories) {
-	        CategoryStatisticDTO categoryStatistic = new CategoryStatisticDTO();
-	        categoryStatistic.setCategoryName(category.getName());
-
-	        // Get all active products for the current category
-	        List<Product> productsInCategory = this.productRepository.findByCategoryIdAndIsActive(category.getId(), true);
-
-	        // Calculate total quantity of active products in the current category
-	        int qtyProductInCategory = productsInCategory.stream().mapToInt(product -> product.getQuantity().intValue()).sum();
-
-	        // Set values in the CategoryStatisticDTO object
-	        categoryStatistic.setTotalProduct(productsInCategory.size());
-	        categoryStatistic.setTotalStockQuantity(qtyProductInCategory);
-
-	        categoryStatistics.add(categoryStatistic);
-	    }
-
-	    statistic.setCategoryStatistics(categoryStatistics);
-
-	    return statistic;
+		return product.stream()
+				.filter(Product::getIsActive)  // Only consider active products
+				.count();
 	}
 
 	public ProductDTO convertToDTO(Product product) {
