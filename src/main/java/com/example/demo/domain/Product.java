@@ -71,5 +71,12 @@ public class Product implements Serializable {
 	public Date getEndDate() {
 	    return endDate;
 	}
+	
+	@PreUpdate
+	public void onUpdate() {
+	    if (this.quantity != null && this.quantity == 0) {
+	        this.isActive = false;
+	    }
+	}
 
 }

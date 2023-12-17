@@ -126,7 +126,7 @@ public class OrderService {
 
         this.cartItemService.remove(bill.getAccountId());
 
-        double sumPrice = cartCheckout.getBillDetails().stream().map(a -> (a.getPrice().add(new BigDecimal(a.getQuantity()))).doubleValue()).reduce(0d, Double::sum);
+        double sumPrice = cartCheckout.getBillDetails().stream().map(a -> (a.getPrice().multiply(new BigDecimal(a.getQuantity()))).doubleValue()).reduce(0d, Double::sum);
         if(cartCheckout.getPayonline()){
             responseDTO.setSuccess(this.createTransaction(sumPrice, bill));
             return responseDTO;
@@ -222,7 +222,7 @@ public class OrderService {
     public TransactionDetails createTransaction(Double amount, Bill bill) {
         try {
             JSONObject json = new JSONObject();
-            json.put("amount", amount);
+            json.put("amount", amount * 100);
             json.put("currency", CURRENCY);
 
             RazorpayClient razorpayClient = new RazorpayClient(KEY, KEY_SECRET);

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.example.demo.domain.Category;
 import com.example.demo.domain.Product;
 import org.springframework.data.jpa.repository.Query;
 
@@ -27,6 +28,9 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	Long countByCategoryIdAndIsActiveTrue(Long categoryId);
 	
 	List<Product> findByIsActive(Boolean isActive);
+	
+	List<Product> findByIsActiveTrue();
+
 	
 	List<Product> findByCategoryIdAndIsActive(Long categoryId, Boolean isActive);
 
