@@ -39,7 +39,7 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
         }
 
         if (!DataUtils.isNullObject(dto.getOrderDate())) {
-            sql.append(" and b.order_date like :date");
+            sql.append(" and b.order_date between :date and now() ");
             params.put("date", new SimpleDateFormat("yyyy-MM-dd").format(dto.getOrderDate()) + "%");
         }
 
