@@ -485,6 +485,34 @@ public class ProductService {
 
 		return sortedProducts;
 	}
-	
 
+    public StatisticProductDTO statisticProduct() {
+        StatisticProductDTO statistic = new StatisticProductDTO();
+        List<CategoryStatisticDTO> categoryStatistics = new ArrayList<>();
+
+        // Get all active categories
+        List<Category> activeCategories = this.categoryRepository.findByIsActive(true);
+
+        for (Category category : activeCategories) {
+            CategoryStatisticDTO categoryStatistic = new CategoryStatisticDTO();
+            categoryStatistic.setCategoryName(category.getName());
+
+            // Get all active products for the current category
+            List<Product> productsInCategory = this.productRepository.findByCategoryIdAndIsActive(category.getId(), true);
+
+            // Calculate total quantity of active products in the current category
+            int qtyProductInCategory = productsInCategory.stream().mapToInt(product -> product.getQuantity().intValue()).sum();
+
+            // Set values in the CategoryStatisticDTO object
+            categoryStatistic.setTotalProduct(productsInCategory.size());
+            categoryStatistic.setTotalStockQuantity(qtyProductInCategory);
+
+            categoryStatistics.add(categoryStatistic);
+        }
+
+        statistic.setCategoryStatistics(categoryStatistics);
+
+        return statistic;
+    }
 }
+	

@@ -36,7 +36,7 @@ public class CategoryResource {
 	}
 
 	@GetMapping("/statistic-category")
-//	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
 	@ApiOperation(value = "Thống kê số lượng lọai sản phẩm")
 	public ResponseDTO statisticCategory() {
 		return ResponseDTO.success(this.categoryService.calculateTotalCatory());
