@@ -92,9 +92,15 @@ public class ProductResource {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
 	@ApiOperation(value = "Thống kê số lượng sản phẩm")
 	public ResponseDTO statisticProduct() {
+		return ResponseDTO.success(this.productService.statisticProduct());
+	}
+
+	@GetMapping("/statistic")
+//	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
+	@ApiOperation(value = "Thống kê số lượng sản phẩm")
+	public ResponseDTO staticPro() {
 		return ResponseDTO.success(this.productService.calculateTotalProduc());
 	}
-	
 
 	@GetMapping("/get-recently-added")
 	@ApiOperation(value = "Lấy danh sách sản phẩm mới được thêm vào gần đây")
