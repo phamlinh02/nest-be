@@ -56,15 +56,15 @@ public class OrderResource {
         return this.orderService.createBill(cart);
     }
 
-    @GetMapping("/selling")
-    public ResponseDTO getTopSellingProducts() {
-        try {
-            List<ProductDTO> order = orderService.getTopSellingProducts(3);
-            return ResponseDTO.success(order);
-        } catch (Exception e) {
-            return ResponseDTO.error();
-        }
-    }
+//    @GetMapping("/selling")
+//    public ResponseDTO getTopSellingProducts() {
+//        try {
+//            List<ProductDTO> order = orderService.getTopSellingProducts(3);
+//            return ResponseDTO.success(order);
+//        } catch (Exception e) {
+//            return ResponseDTO.error();
+//        }
+//    }
     @GetMapping("/statistics")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public ResponseDTO statisticsBill() {

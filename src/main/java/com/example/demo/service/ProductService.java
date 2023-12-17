@@ -8,13 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.*;
@@ -368,20 +362,24 @@ public class ProductService {
 		// Map the recently added products to DTOs
 		List<ProductDTO> recentlyAddedProductDTOs = recentlyAddedProducts.stream()
 				.map(product -> {
-					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
-					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-					if (category != null) {
-						productDTO.setCategoryName(category.getName());
+						if (product.getIsActive()) {
+						ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+						Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+						if (category != null) {
+							productDTO.setCategoryName(category.getName());
+						}
+						Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
+						List<Rate> rates = ratesPage.getContent();
+
+						long totalRatings = ratesPage.getTotalElements();
+						OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+
+						productDTO.setTotalRatings(totalRatings);
+						productDTO.setAverageRating(averageRating.orElse(0.0));
+						return productDTO;
+					} else {
+						return null; // Skip inactive products
 					}
-					Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
-					List<Rate> rates = ratesPage.getContent();
-
-					long totalRatings = ratesPage.getTotalElements();
-					OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
-
-					productDTO.setTotalRatings(totalRatings);
-					productDTO.setAverageRating(averageRating.orElse(0.0));
-					return productDTO;
 				})
 				.collect(Collectors.toList());
 
@@ -397,27 +395,34 @@ public class ProductService {
 		// Ánh xạ danh sách sản phẩm sang danh sách DTO
 		List<ProductDTO> mostSearchedProductDTOs = mostSearchedProducts.stream()
 				.map(product -> {
-					ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
-					Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
-					if (category != null) {
-						productDTO.setCategoryName(category.getName());
+					// Check if the product is active before processing
+					if (product.getIsActive()) {
+						ProductDTO productDTO = MapperUtils.map(product, ProductDTO.class);
+						Category category = categoryRepository.findById(product.getCategoryId()).orElse(null);
+						if (category != null) {
+							productDTO.setCategoryName(category.getName());
+						}
+						Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
+						List<Rate> rates = ratesPage.getContent();
+
+						long totalRatings = ratesPage.getTotalElements();
+						OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
+
+						productDTO.setTotalRatings(totalRatings);
+						productDTO.setAverageRating(averageRating.orElse(0.0));
+
+						return productDTO;
+					} else {
+						return null; // Skip inactive products
 					}
-					Page<Rate> ratesPage = this.rateRepository.findByProductId(product.getId(), pageable);
-					List<Rate> rates = ratesPage.getContent();
-
-					long totalRatings = ratesPage.getTotalElements();
-					OptionalDouble averageRating = rates.stream().mapToInt(Rate::getStar).average();
-
-					productDTO.setTotalRatings(totalRatings);
-					productDTO.setAverageRating(averageRating.orElse(0.0));
-	                
-					return productDTO;
-				}).collect(Collectors.toList());
+				})
+				.filter(Objects::nonNull) // Filter out null entries (skipped inactive products)
+				.collect(Collectors.toList());
 
 		return mostSearchedProductDTOs;
 	}
 	public List<ProductDTO> getTopRatedProducts(int limit) {
-	    List<Product> topRatedProducts = productRepository.findAll();
+	    List<Product> topRatedProducts = productRepository.findByIsActiveTrue();
 
 	    topRatedProducts.sort(Comparator.comparingDouble(this::calculateAverageRating).reversed());
 
@@ -453,47 +458,54 @@ public class ProductService {
 
 	    return rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
 	}
-	
-    public List<ProductDTO> getTopSellingProducts(int limit) {
-        // Assuming you have a service or repository to retrieve all bill details
-        List<BillDetail> allBillDetails = orderDetailReponsitory.findAll(); // Replace with actual service/repository
 
-        // Group bill details by product and sum the quantities
-        Map<Long, Long> productQuantities = allBillDetails.stream()
-                .collect(Collectors.groupingBy(BillDetail::getProductId,
-                        Collectors.summingLong(BillDetail::getQuantity)));
+	public List<ProductDTO> getTopSellingProducts(int limit) {
+		// Assuming you have a service or repository to retrieve all bill details
+		List<BillDetail> allBillDetails = orderDetailReponsitory.findAll(); // Replace with actual service/repository
 
-        // Sort products by total quantity in descending order
-        List<ProductDTO> sortedProducts = productQuantities.entrySet().stream()
-                .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
-                .limit(limit)
-                .map(entry -> {
-                    ProductDTO productDTO = new ProductDTO();
+		// Group bill details by product and sum the quantities
+		Map<Long, Long> productQuantities = allBillDetails.stream()
+				.collect(Collectors.groupingBy(BillDetail::getProductId,
+						Collectors.summingLong(BillDetail::getQuantity)));
 
-                    // Fetch additional details from your Product entity based on the ID
-                    // Replace with actual logic to retrieve Product by ID
-                    Optional<Product> productDetails = productRepository.findById(entry.getKey());
-                    productDTO.setId(productDetails.get().getId());
-                    productDTO.setProductName(productDetails.get().getProductName());
-                    productDTO.setDescription(productDetails.get().getDescription());
-                    productDTO.setPrice(productDetails.get().getPrice());
-                    productDTO.setImage(productDetails.get().getImage());
-                    productDTO.setCategoryId(productDetails.get().getCategoryId());
+		// Sort products by total quantity in descending order
+		List<ProductDTO> sortedProducts = productQuantities.entrySet().stream()
+				.sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
+				.limit(limit)
+				.map(entry -> {
+					Long productId = entry.getKey();
+					// Fetch additional details from your Product entity based on the ID
+					// Replace with actual logic to retrieve Product by ID
+					Optional<Product> productDetails = productRepository.findById(productId);
 
-                    // Calculate TotalRatings and AverageRating based on Rate entity
-                    List<Rate> rates = rateRepository.findByProductId(productDTO.getId());
-                    long totalRatings = rates.size();
-                    double averageRating = rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
+					// Check if the product is active before processing
+					if (productDetails.isPresent() && productDetails.get().getIsActive()) {
+						ProductDTO productDTO = new ProductDTO();
+						productDTO.setId(productDetails.get().getId());
+						productDTO.setProductName(productDetails.get().getProductName());
+						productDTO.setDescription(productDetails.get().getDescription());
+						productDTO.setPrice(productDetails.get().getPrice());
+						productDTO.setImage(productDetails.get().getImage());
+						productDTO.setCategoryId(productDetails.get().getCategoryId());
 
-                    productDTO.setTotalRatings(totalRatings);
-                    productDTO.setAverageRating(averageRating);
+						// Calculate TotalRatings and AverageRating based on Rate entity
+						List<Rate> rates = rateRepository.findByProductId(productDTO.getId());
+						long totalRatings = rates.size();
+						double averageRating = rates.stream().mapToInt(Rate::getStar).average().orElse(0.0);
 
-                    return productDTO;
-                })
-                .collect(Collectors.toList());
+						productDTO.setTotalRatings(totalRatings);
+						productDTO.setAverageRating(averageRating);
 
-        return sortedProducts;
-    }
+						return productDTO;
+					} else {
+						return null; // Skip inactive products
+					}
+				})
+				.filter(Objects::nonNull) // Filter out null entries (skipped inactive products)
+				.collect(Collectors.toList());
+
+		return sortedProducts;
+	}
 	
 
 }

@@ -80,7 +80,7 @@ public class CartItemImpl implements CartItemService {
 
     @Override
     public List<Product> getTopProductsAcrossAccounts(int limit) {
-        List<CartItem> allCartItems = cartItemReponse.findAll();
+        List<CartItem> allCartItems = cartItemReponse.finfAllIsActive();
 
         // Group cart items by product and sum the quantities
         Map<Product, Long> productQuantities = allCartItems.stream()

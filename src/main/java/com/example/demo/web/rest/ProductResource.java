@@ -123,7 +123,7 @@ public class ProductResource {
 	 @GetMapping("/selling")
 	    public ResponseDTO getTopSellingProducts() {
 	        try {
-	            List<ProductDTO> order = productService.getTopSellingProducts(3);
+	            List<ProductDTO> order = productService.getTopSellingProducts(4);
 	            return ResponseDTO.success(order);
 	        } catch (Exception e) {
 	            return ResponseDTO.error();
