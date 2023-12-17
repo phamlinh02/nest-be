@@ -66,7 +66,6 @@ public class WebSecurityConfig {
 	        .authorizeHttpRequests(auth -> 
 	          auth.requestMatchers("/api/nest/product/**", "/api/nest/uploads/**", "/api/nest/account/**",
     				"/api/nest/category/**").permitAll()
-	          .requestMatchers("/api/nest/cart/**", "/api/nest/order/**").authenticated()
 	              .anyRequest().authenticated()
 	        );
 	    

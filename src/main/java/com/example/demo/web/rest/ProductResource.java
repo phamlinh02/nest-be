@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,6 +89,7 @@ public class ProductResource {
 	}
 	
 	@GetMapping("/statistic-product")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
 	@ApiOperation(value = "Thống kê số lượng sản phẩm")
 	public ResponseDTO statisticProduct() {
 		return ResponseDTO.success(this.productService.statisticProduct());

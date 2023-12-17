@@ -9,6 +9,7 @@ import com.example.demo.service.dto.order.ViewBillDetail;
 import com.example.demo.service.dto.product.ProductDTO;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +66,7 @@ public class OrderResource {
         }
     }
     @GetMapping("/statistics")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public ResponseDTO statisticsBill() {
         return ResponseDTO.success(this.orderService.getStatisticsBill());
     }

@@ -1,10 +1,12 @@
 package com.example.demo.security.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.config.Constant;
@@ -14,9 +16,12 @@ import com.example.demo.domain.Authority;
 import com.example.demo.domain.Role;
 import com.example.demo.repository.IAuthorityRepository;
 import com.example.demo.repository.IRoleRepository;
+import com.example.demo.security.jwt.JwtUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AccountDetailsImpl implements UserDetails{
 	
 	private static final long serialVersionUID = 1L;
@@ -120,10 +125,13 @@ public class AccountDetailsImpl implements UserDetails{
 		this.roleName = roleName;
 	}
 
-	@Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
+	 @Override
+	    public Collection<? extends GrantedAuthority> getAuthorities() {
+	        List<GrantedAuthority> authorities = new ArrayList<>();
+	        String roleAuthority = roleName.name();
+	        authorities.add(new SimpleGrantedAuthority(roleAuthority));
+	        return authorities;
+	    }
 
     @Override
     public String getPassword() {

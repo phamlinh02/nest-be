@@ -1,6 +1,7 @@
 package com.example.demo.web.rest;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -71,6 +72,7 @@ public class RateResource {
 	
 	@GetMapping("/get-statistics")
 	@ApiOperation(value = "Lấy thống kê đánh giá theo sản phẩm")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
 	public ResponseDTO getRateStatistics(Pageable pageable) {
 	    return ResponseDTO.success(this.rateService.getRateStatistics());
 	}
