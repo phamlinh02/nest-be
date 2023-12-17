@@ -28,10 +28,7 @@ public interface IProductRepository extends JpaRepository<Product, Long>{
 	Long countByCategoryIdAndIsActiveTrue(Long categoryId);
 	
 	List<Product> findByIsActive(Boolean isActive);
-	
-	List<Product> findByIsActiveTrue();
 
-	
 	List<Product> findByCategoryIdAndIsActive(Long categoryId, Boolean isActive);
 
 	List<Product> findByIsActiveTrue();
