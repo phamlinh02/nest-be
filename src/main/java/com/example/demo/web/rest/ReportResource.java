@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,21 +24,25 @@ public class ReportResource {
     ReportService reportService;
 
     @GetMapping("/getProduct")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public int getAllQtyProduct(){
         return reportService.getQtyProduct();
     }
 
     @GetMapping("/getOrder")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public int getQtyOrder(){
         return reportService.getQtyOder();
     }
 
     @GetMapping("/getRevenue")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public int getRevenue(){
         return reportService.getRevenue();
     }
 
     @GetMapping("/monthly")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DIRECTOR')")
     public int getMonthlyOrders() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);

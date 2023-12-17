@@ -1,6 +1,7 @@
 package com.example.demo.web.rest;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ public class AuthorityResource {
 	}
 	
 	@GetMapping("/get-all")
+	@PreAuthorize("hasRole('DIRECTOR')")
     @ApiOperation(value = "Lấy danh sách authority")
     public ResponseDTO getAllAuthority(Pageable pageable) {
         return ResponseDTO.success(this.authorityService.getAllAuthority(pageable));
@@ -41,6 +43,7 @@ public class AuthorityResource {
 	
 	@PostMapping("/update-role/{authorityId}")
     @ApiOperation(value = "Cập nhật roleId của authority")
+	@PreAuthorize("hasRole('DIRECTOR')")
     public ResponseDTO updateAuthorityRole(
             @PathVariable Long authorityId,
             @RequestBody UpdateAuthorityDTO updateAuthorityDTO) {

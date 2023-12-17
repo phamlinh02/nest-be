@@ -2,6 +2,7 @@ package com.example.demo.web.rest;
 
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,36 +32,42 @@ public class RoleResource {
 	
 	@GetMapping("/get-all")
 	@ApiOperation(value = "Lấy danh sách vai trò người dùng")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO getAllRole(Pageable pageable) {
 		return ResponseDTO.success(this.roleService.getAllRole(pageable));
 	}
 	
 	@GetMapping("/get-all-active")
 	@ApiOperation(value = "Lấy danh sách vai trò")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO getAllRoleIsActive(Pageable pageable) {
 		return ResponseDTO.success(this.roleService.getAllRoleIsActive(pageable));
 	}
 	
 	@PostMapping("/save")
-	@ApiOperation(value = "Thêm vai trò")	
+	@ApiOperation(value = "Thêm vai trò")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO saveCategory(@Validated @RequestBody CreateRoleDTO role) {
 		return ResponseDTO.success(this.roleService.createRoleIfNotExist(role));
 	}
 	
 	@PostMapping("/update")
 	@ApiOperation(value = "Cập nhật vai trò")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO updateCategory(@Validated @ModelAttribute UpdateRoleDTO role) {
 		return ResponseDTO.success(this.roleService.updateRole(role));
 	}
 	
 	@PostMapping("/update-status")
 	@ApiOperation(value = "Cập nhật trạng thái vai trò")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO updateRoleStatus(@RequestBody UpdateRoleStatusDTO updateStatusDTO) {
 	    return ResponseDTO.success(this.roleService.updateRoleStatus(updateStatusDTO));
 	}
 	
 	@GetMapping("/get-role")
 	@ApiOperation(value = "Lấy thông tin vai trò")
+	@PreAuthorize("hasRole('DIRECTOR')")
 	public ResponseDTO loadRoleById(Long id) {
 		return ResponseDTO.success(this.roleService.loadRoleById(id));
 	}
