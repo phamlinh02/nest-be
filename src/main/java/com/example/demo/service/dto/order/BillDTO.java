@@ -40,7 +40,7 @@ public class BillDTO {
 
 //    getAllOrder
     BillDTO(Long id, Date orderDate, String status, String description, String reasonDeny,
-            Long countOrder, BigDecimal sumPriceBill, String email, String username, String fullName){
+            Long countOrder, BigDecimal sumPriceBill, String email, String username, String fullName, String paymentId){
         this.id = id;
         this.orderDate = orderDate;
         this.status = Constant.BILL_STATUS.valueOf(status);
@@ -51,5 +51,6 @@ public class BillDTO {
         this.email = email;
         this.username = username;
         this.fullName = fullName;
+        this.paymentId = paymentId;
     }
 }

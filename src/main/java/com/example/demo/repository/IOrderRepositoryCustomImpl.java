@@ -26,7 +26,7 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
                 .append(" b.id, b.order_date orderDate, b.status, b.description, b.reason_deny reasonDeny, ")
                 .append(" (select count(b.id) from bill_detail b1 where b1.order_id = b.id GROUP by b1.order_id) countOrder, ")
                 .append(" (SELECT sum(b2.price * b2.quantity) from bill_detail b2 where  b2.order_id = b.id ) sumPriceBill, ")
-                .append(" a.email, a.username, a.full_name fullName ")
+                .append(" a.email, a.username, a.full_name fullName, b.payment_id paymentId ")
                 .append(" from bill b join bill_detail b3 on b.id = b3.order_id ")
                 .append(" join account a on a.id = b.account_id ")
                 .append(" where 1=1 ");
