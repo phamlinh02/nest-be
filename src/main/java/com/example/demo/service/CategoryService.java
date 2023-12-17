@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.domain.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,12 @@ public class CategoryService {
 	    }
 
 	    return new PageImpl<>(categoriesWithProductCount, pageable, categories.getTotalElements());
+	}
+
+	public long calculateTotalCatory() {
+		List<Category> categories = categoryRepository.findAll();
+		return categories.stream()
+				.count();
 	}
 	
 	public Page<CategoryDTO> getAllCategory(Pageable pageable) {
