@@ -23,6 +23,8 @@ public class BillDTO {
     private Long accountId;
     private Long staffId;
     private Date orderDate;
+    private Date fromDate;
+    private Date toDate;
     private String description;
     @Enumerated(EnumType.STRING)
     private Constant.BILL_STATUS status;

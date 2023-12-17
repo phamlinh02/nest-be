@@ -38,9 +38,10 @@ public class IOrderRepositoryCustomImpl implements IOrderRepositoryCustom {
             params.put("id", dto.getId());
         }
 
-        if (!DataUtils.isNullObject(dto.getOrderDate())) {
-            sql.append(" and b.order_date between :date and now() ");
-            params.put("date", new SimpleDateFormat("yyyy-MM-dd").format(dto.getOrderDate()) + "%");
+        if (!DataUtils.isNullObject(dto.getFromDate()) && !DataUtils.isNullObject(dto.getToDate())) {
+            sql.append(" and b.order_date between :fromDate and :toDate ");
+            params.put("fromDate", new SimpleDateFormat("yyyy-MM-dd").format(dto.getFromDate()));
+            params.put("toDate", new SimpleDateFormat("yyyy-MM-dd").format(DataUtils.addDays(dto.getToDate(), 1)));
         }
 
         if(!DataUtils.isNullObject(dto.getStatus())){

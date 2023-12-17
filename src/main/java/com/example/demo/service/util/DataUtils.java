@@ -2,6 +2,8 @@ package com.example.demo.service.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +43,14 @@ public class DataUtils {
                 return false;
         }
         return true;
+    }
+
+    public static Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+        return cal.getTime();
     }
 
     public boolean isAnyNullObject(List<Object> objs) {
