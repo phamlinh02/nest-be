@@ -417,7 +417,7 @@ public class ProductService {
 		return mostSearchedProductDTOs;
 	}
 	public List<ProductDTO> getTopRatedProducts(int limit) {
-	    List<Product> topRatedProducts = productRepository.findAll();
+	    List<Product> topRatedProducts = productRepository.findByIsActiveTrue();
 
 	    topRatedProducts.sort(Comparator.comparingDouble(this::calculateAverageRating).reversed());
 
